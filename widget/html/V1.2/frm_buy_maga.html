@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>2017年第28期</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+        .buy-maga .main .waring {
+        	padding-top: 1rem;
+        }
+    </style>
+</head>
+
+<body class="buy-maga">
+    <div id="app" v-cloak>
+		<div class="top-bg"></div>
+        <div class="main">
+            <div class="waring">
+                <p>抱歉！您暂时没有阅读权限。购买本期报告之后，可以观看</p>
+            </div>
+            <div class="recomm">
+                <div class="left">
+                    <img :src="thumb" alt="">
+                    <i class="hot-ico"></i>
+                </div>
+                <div class="right">
+                    <h2>{{magazineName}}</h2>
+                    <p>{{remarks}}</p>
+                </div>
+            </div>
+            <div class="buy-btn">
+                <p @click="toBuyMag()">立即购买(￥<span>100</span>)</p>
+                <p style="margin-top: 0.2rem;" @click="openVIP()">前往购买套餐</p>
+            </div>
+        </div>
+        <div class="bottom-bg"></div>
+    </div>
+    <script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                userId: "",
+                magazineId: "",
+                userEntity: {},
+                magazineName: "",
+                orderNo: "",
+                orderInfo:'',
+                payWay:'',
+                thumb:'',
+                remarks:''
+            },
+            methods: {
+                init: function() {
+                    vm.userEntity = sessionAgent.getLoginInfo();
+                    if (vm.userEntity != null && vm.userEntity != " ") {
+                        vm.userId = vm.userEntity.userId;
+                    }
+
+                    vm.magazineId = api.pageParam.magazineId;
+                    vm.magazineName = api.pageParam.magazineName;
+                    vm.thumb = api.pageParam.thumb;
+                    vm.remarks = api.pageParam.remarks;
+                },
+                openVIP:function(){
+                	api.openWin({
+	                    name: 'win_userVIP',
+	                    url: 'win_userVIP.html'
+                    });
+                },
+                toBuyMag: function() {
+                    api.actionSheet({
+                        title: '支付方式',
+                        cancelTitle: '取消',
+                        buttons: ['支付宝支付','账户余额支付']
+                            //	    buttons: ['微信支付','支付宝支付']
+                    }, function(ret, err) {
+                        var clkChoose = ret.buttonIndex; //分别为1,2
+                        if (clkChoose == 1) {
+                        	vm.payWay = "alipay";
+                        }
+						if (clkChoose == 2) {
+							vm.payWay = "balance";
+                        }
+                        if (clkChoose == 3) {
+                        	vm.payWay = "wechat";
+                        }
+                        vm.toCreateOrder();
+
+                    });
+                },
+                toCreateOrder: function() {
+                    var url = ajaxAgent.serverAction + '/app/order/create';
+                    api.ajax({
+                        url: url,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                userId: vm.userId,
+                                productId: 4,
+                                payWay: vm.payWay,
+                                magazineId: vm.magazineId
+                            }
+                        }
+                    }, function(ret, err) {
+//                      console.log(JSON.stringify(ret));
+//console.log("------"+vm.payWay);return;
+                        if (ret.resultCode == 10000) {
+                            var data = ret.resultData;
+                            vm.orderNo = data.orderNo;
+                            vm.orderInfo = data.orderInfo;
+                            if (vm.payWay == 'wechat') {
+                                vm.payByWechat();
+                            }
+                            if (vm.payWay == 'alipay') {
+                                vm.payByAliPay();
+                            }
+                            if(vm.payWay == 'balance'){
+                            	vm.payByWallet();
+                            }
+                        }
+                    });
+                },
+                payByAliPay: function() {
+                    var aliPayPlus = api.require('aliPayPlus');
+                    aliPayPlus.payOrder({
+                        orderInfo: vm.orderInfo
+                    }, function(ret, err) {
+                        if (ret) {
+                            var msg;
+                            if (ret.code == 9000) {
+                                msg = '支付成功,请在书架查看';
+                                vm.orderFinish();
+                                api.execScript({
+                                    frameName: 'gro_magDetail0',
+                                    script: 'vm.getContent();'
+                                });
+                                api.execScript({
+                                    frameName: 'gro_magDetail1',
+                                    script: 'vm.getContent();'
+                                });
+                                alert(msg);
+                                api.closeFrame();
+                                return ;
+                            }
+                            if (ret.code == 8000) {
+                                msg = '正在处理中';
+                            }
+                            if (ret.code == 4000) {
+                                msg = '订单支付失败';
+                            }
+                            if (ret.code == 5000) {
+                                msg = '重复请求';
+                            }
+                            if (ret.code == 6001) {
+                                msg = '中途取消支付操作';
+                            }
+                            if (ret.code == 6002) {
+                                msg = '网络连接出错';
+                            }
+                            if (ret.code == 6004) {
+                                msg = '支付结果未知';
+                            }
+                            api.alert({
+                                title: '支付结果',
+                                msg: msg,
+                                buttons: ['确定']
+                            }, function(ret, err) {
+//                              if (ret.buttonIndex == 1) {
+//                                  api.closeFrame();
+//                              }
+                            });
+                        } else {
+                            api.alert({
+                                msg: '网络连接错误！'
+                            });
+
+                        }
+                    });
+                },
+                payByWallet:function(){
+                	vm.orderFinish();
+                },
+                payByWechat: function() {
+//                  alert('微信支付正在开发中！订单号：' + vm.orderNo);
+
+                },
+                orderFinish: function() {
+                    var url = ajaxAgent.serverAction + '/app/order/finish';
+                    api.ajax({
+                        url: url,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll: false,
+                        data: {
+                            values: {
+                                userId: vm.userId,
+                                orderNo: vm.orderNo
+                            }
+                        }
+                    }, function(ret, err) {
+                      	if(vm.payWay == "balance"){
+                      		if(ret.resultCode == 10000){
+                                api.execScript({
+                                    frameName: 'gro_magDetail0',
+                                    script: 'vm.getContent();'
+                                });
+                                api.execScript({
+                                    frameName: 'gro_magDetail1',
+                                    script: 'vm.getContent();'
+                                });
+                                alert("账户余额支付成功！");
+                                api.closeFrame();
+                      		}else if(ret.resultCode == 90027){
+                      			alert("账户余额不足，请更换支付方式！");
+                      		}
+                      	}
+                      	
+                      		
+                    });
+                }
+
+            }
+        });
+
+        apiready = function() {
+            FastClick.attach(document.body);
+            vm.init();
+
+        }
+    </script>
+</body>
+
+</html>

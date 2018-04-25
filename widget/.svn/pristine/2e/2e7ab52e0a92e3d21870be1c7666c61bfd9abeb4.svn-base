@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>修改密码</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="password">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="ico-wrap" @click="closeWin();">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>修改密码</h2>
+            </div>
+            <div class="right-btn" @click="save();">
+                <h2>保存</h2>
+            </div>
+        </div>
+    </div>
+    <div class="form-wrap">
+        <form onsubmit="return false;">
+            <div class="item">
+                <a class="list">
+                    <div class="control-input">
+                        <input :type="index!=0 ? 'password' : 'text'" placeholder="请输入旧密码" v-model="oldPassword"/>
+                        <span class="eye" @click="show(0)"></span>
+                    </div>
+                </a>
+            </div>
+            <div class="item">
+                <a class="list">
+                    <div class="control-input">
+                        <input :type="index!=1?'password':'text'" placeholder="请输入新密码" v-model="password"/>
+                        <span class="eye" @click="show(1)"></span>
+                    </div>
+                </a>
+                <a class="list">
+                    <div class="control-input">
+                        <input :type="index!=2 ? 'password' : 'text'" placeholder="确认新密码" v-model="rePassword"/>
+                       <span class="eye" @click="show(2)"></span>
+                    </div>
+                </a>
+            </div>
+            <p class="tip-mes">您的新密码必须同时包含数字和字母，总长至少6个字符。</p>
+        </form>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>    
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var nickName,userId;
+apiready = function(){
+	FastClick.attach(document.body);
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+	utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	
+	var userEntity = sessionAgent.getLoginInfo();
+	vm.nickName = userEntity.nickName;
+	vm.userId = userEntity.userId;
+}
+var vm = new Vue({
+	el:"#app",
+	data:{
+		userId:'',
+		oldPassword:'',
+		password:'',
+		rePassword:'',
+		index:-1,
+		
+	},
+	methods:{
+		closeWin:function(){
+			api.closeWin();
+		},
+		show:function(index){
+			vm.index = index;
+			setTimeout(function() {
+            	vm.index = -1;       
+            },1000);
+		
+		},
+		save:function(){		//index:0代表修改昵称,1代表修改密码		
+			if(vm.oldPassword.length<6){
+				api.toast({
+	                msg:'请输入正确的旧密码！',
+	                location:'middle'
+                });
+				return ;
+			}
+			if(vm.password != vm.rePassword){
+				api.toast({
+	                msg:'请保证两个新密码一致！',
+	                location:'middle'
+                });
+				return ;
+			}
+			
+			var url = ajaxAgent.serverAction + '/app/resetPwd';
+	    	api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data : {
+					values : { 
+						userId : vm.userId,
+						oldPassword : vm.oldPassword,
+						newPassword : vm.password,
+					}
+				}
+			},function(ret,err){
+	//			console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					alert('修改密码成功');
+					api.closeWin();
+				}else{
+					api.toast({
+		                msg:ret.resultMessage,
+		                location:'middle'
+	                });
+				}
+			});
+		}
+	
+	}
+});
+
+</script>
+</html>

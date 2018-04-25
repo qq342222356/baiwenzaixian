@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <!--<script src="script/flexible.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="script/zepto.min.js"></script>
+    <title>杂志详情</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    .article p {
+        text-indent: 2em;
+    }
+    /* footer */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        background: #fff;
+        padding: 0.4rem;
+        display: -webkit-box;
+        -webkit-box-pack: justify;
+        text-align: center;
+        line-height: 0.533333rem;
+        font-size: 0.4rem;
+        color: #d64041;
+    }
+    .footer a.left {
+        display: inline-block;
+        width: 3.066667rem;
+        height: 0.533333rem;
+        vertical-align: middle;
+    }
+    .footer .right {
+        display: block;
+        width: 3.066667rem;
+    }
+    .footer .left {
+        background: url(style/images/icn_dir_03.png) no-repeat;
+        background-position: center;
+        background-size: 0.6rem 0.48rem;
+        border-right: 1px solid #e3e3e3;
+    }
+    .footer .right {
+        background: url(style/images/bookmark_03.png) no-repeat;
+        background-position: center;
+        background-size: 0.48rem 0.506667rem;
+        border-left: 1px solid #e3e3e3;
+    }
+    .footer .right.added {
+        background-image: url(style/images/bookmark_added_03.png);
+    }
+    .d-header .ico-wrap {
+    	top: auto !important;
+    }
+    </style>
+</head>
+
+<body class="maga-content">
+<div id="app" v-cloak>
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="d-top" >
+        <div class="d-header" style="background-color: #FFFFFF;height: 1.146667rem;">
+            <div class="ico-wrap" @click="closeWin();">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>{{magazineName}}</h2>
+            </div>
+            <div class="ico-wrap">
+                <!--<i class="share"></i>-->
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-bg"></div>
+    <div class="c-footer">
+        <ul class="c-foot-box">
+            <li  @click="openContent()">
+            <div><i class="dir-ico"></i></div>
+            </li>
+            <li>
+            <div>  
+             <span class="page-count"></span>
+            
+             <span class="count-sum">{{percent}}</span> </div>
+
+            </li>
+        </ul>
+    </div>
+</div>    
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            headerH: 0,
+            footerH: 0,
+            userId: "",
+            magazineId: "",
+            magazineName: "",
+            userEntity: {},
+            myFrames: [],
+            toFresh: false,
+            index: 0,
+            percent:'1/14'
+        },
+        methods: {
+            init: function() {
+//              console.log("api.winHeight:" + api.winHeight + ",$api.offset:" + $api.offset($api.dom('body')).h);
+//              var rate = api.winHeight / $api.offset($api.dom('body')).h;
+//              vm.footerH = $api.offset($api.dom('.foot-set')).h * rate;
+//              var header = document.querySelector('#header');
+//              $api.fixStatusBar(header);
+//              vm.headerH = $api.offset(header).h * rate;
+
+//				var headH = $api.offset($api.dom('.d-top')).h;
+//				var footH = $api.offset($api.dom('.c-foot-box')).h;
+//				var bodyW = $api.offset($api.dom('body')).w;
+//				var rate = api.winWidth/bodyW;
+//				var headerH = headH*rate;
+//				var footerH = footH*rate;
+//              console.log(api.winWidth+"===="+bodyW+"===="+headH+"===="+headerH+"===="+footH+"===="+footerH);
+//              return ;
+                vm.headerH = utilsFuncs.getFixedStateBarHeigth($api.dom('.d-header'));
+                vm.footerH = utilsFuncs.getFixedFooterHeigth($api.dom('.c-foot-box'));
+                vm.userId = sessionAgent.getLoginInfo().userId;
+//              if (vm.userEntity != null && vm.userEntity != "") {
+//                  vm.userId = vm.userEntity.userId;
+//              }
+                vm.magazineId = api.pageParam.id;
+                vm.magazineName = api.pageParam.name;
+                api.parseTapmode();
+                vm.openGro();
+                api.addEventListener({
+                    name: 'keyback'
+                }, function(ret, err) {
+                    vm.closeWin();
+                });
+
+            },
+            openGro: function() {
+
+                var contentIdList = api.pageParam.contentIdList;
+//              console.log(contentIdList+"****"+JSON.stringify(contentIdList));
+                var idList = contentIdList;
+                var total = idList.length;
+                for (var i = 0; i < total; i++) {
+                    var baseFrameObj = {
+                        name: 'gro_magDetail' + i,
+                        url: 'gro_magDetail.html',
+                        pageParam: {
+                            magazineId: vm.magazineId,
+                            magazineName: api.pageParam.name,
+                            thumb:api.pageParam.thumb,
+                            remarks:api.pageParam.remarks,
+                            contentId: idList[i],
+                            headerH: vm.headerH,
+                            footerH: vm.footerH
+                        }
+                    };
+                    vm.myFrames.push(baseFrameObj);
+                }
+                api.openFrameGroup({
+                    name: 'demoGro',
+                    background: '#fff',
+                    scrollEnabled: true,
+                    rect: {
+                        x: 0,
+                        y: vm.headerH,
+                        w: 'auto',
+                        h: api.winHeight - vm.headerH - vm.footerH
+                    },
+                    index: 0,
+                    frames: vm.myFrames,
+                }, function(ret, err) {
+                    vm.index = ret.index;
+                    vm.index++; 
+                    vm.percent = vm.index +"/"+ total;
+                });
+
+            },
+            closeWin: function() {
+//              if (vm.toFresh) {
+//                  api.execScript({
+//                      name: 'win_main',
+//                      frameName: 'frm_main_body',
+//                      script: 'reFresh();'
+//                  });
+//                  api.execScript({
+//                      name: 'win_main',
+//                      frameName: 'frm_main_cate',
+//                      script: 'reFresh();'
+//                  });
+//              }
+                api.closeWin();
+            },
+            openContent: function() {
+                api.openSlidPane({
+                    type: 'left'
+                });
+            },
+            toContent: function(index) {
+                vm.index = index;
+//              console.log("index :****   " + vm.index)
+
+                api.setFrameGroupIndex({
+                    name: 'demoGro',
+                    index: vm.index,
+                    scroll: true
+                });
+            }
+        }
+    })
+
+
+    apiready = function() {
+    	FastClick.attach(document.body);
+        vm.init()
+    }
+</script>
+</html>

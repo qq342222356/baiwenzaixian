@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+
+    <title>首页分类</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+        
+        .journal_list {
+            padding: 0.4rem;
+        }
+        
+        .year-title {
+            border-bottom: 1px solid #e3e3e3;
+            margin-bottom: 0.573333rem;
+            display: -webkit-box;
+            -webkit-box-pack: justify;
+            text-align: center;
+        }
+        
+        .year-title span {
+            color: #1a1a1a;
+            line-height: 0.8rem;
+            border-bottom: 1px solid #bc212b;
+            display: inline-block;
+            background: url(style/images/calender_06.png) no-repeat;
+            background-size: 0.693333rem 0.413333rem;
+            padding-left: 0.7rem;
+            background-position-y: 0.2rem;
+        }
+        
+        .year-title a {
+            display: block;
+        }
+        
+        .year-title .more {
+            width: 1.866667rem;
+            height: 0.586667rem;
+            line-height: 0.586667rem;
+            border-radius: 0.293333rem;
+            border: 1px solid #e6e6e6;
+            color: #e6e6e6;
+            text-align: center;
+            /*padding-left: 0.4rem;*/
+            /*background: url(style/images/more_inactive_06.png) no-repeat;*/
+            /*background-size: cover;*/
+            /*background-position: 1.266667rem 0;*/
+        }
+        
+        .year-title .more.active {
+            border: 1px solid #f8606a;
+            color: #f8606a;
+            /*background: url(style/images/more_active_03.png) no-repeat;*/
+        }
+        
+        .font11 {
+            font-size: 11px;
+        }
+        
+        [data-dpr="2"] .font11 {
+            font-size: 22px;
+        }
+        
+        [data-dpr="3"] .font11 {
+            font-size: 33px;
+        }
+        
+        .font12 {
+            font-size: 12px;
+        }
+        
+        [data-dpr="2"] .font12 {
+            font-size: 24px;
+        }
+        
+        [data-dpr="3"] .font12 {
+            font-size: 36px;
+        }
+        
+        .font16 {
+            font-size: 16px;
+        }
+        
+        [data-dpr="2"] .font16 {
+            font-size: 32px;
+        }
+        
+        [data-dpr="3"] .font16 {
+            font-size: 48px;
+        }
+        
+        .pics {
+            /*
+    display: -webkit-box;
+    -webkit-box-pack: justify;
+    -webkit-box-align: center;
+    margin-bottom: 0.266667rem;
+    */
+            /**   text-align: center;**/
+        }
+        
+        .pics .cover {
+            display: inline-block;
+            margin-right: 0.2rem;
+            position: relative;
+            padding-bottom: 0.15rem;
+        }
+        
+        .pics .cover:nth-child(3n) {
+            margin-right: 0;
+        }
+        
+        .line .cover {
+            display: block;
+            border: 1px solid #e9e9e9;
+            width: 2.826667rem;
+            height: 3.586667rem;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .cover img {
+            width: 2.826667rem;
+            height: 3.586667rem;
+        }
+        
+        .journalFlag {
+            position: absolute;
+            width: 1.24rem;
+            height: 1.12rem;
+            right: 0;
+            top: 0;
+            background: url(style/images/flag_03.png) no-repeat;
+            background-size: cover;
+        }
+        
+        .journalFlag span {
+            color: #fff;
+            transform: rotate(43deg);
+            display: inline-block;
+            position: absolute;
+            right: 0;
+            line-height: 0.533333rem;
+            top: 0px;
+            width: 1.173333rem;
+            text-align: right;
+        }
+        
+        .hide {
+            display: none;
+        }
+        
+        .main {
+            padding-bottom: 1.44rem;
+        }
+        
+        .banner {
+            height: 3.6rem;
+        }
+        
+        .covernone {
+            display: none !important;
+        }
+        
+        .coverblock {
+            display: block-line;
+        }
+    </style>
+</head>
+
+<body class="recomm">
+
+    <div id="app" v-cloak>
+
+        <!-- 上面背景 -->
+        <div class="top-bg"></div>
+
+        <div class="main">
+            <section class="banner" :style="'background:url('+imgUrl+') no-repeat center center; background-size: cover;'">
+            </section>
+            <section class="tabs">
+            	<span :class="{active:cou_index==0}" @click="tabTo(0)">政务服务大数据报告</span>
+	            <span :class="{active:cou_index==1}" @click="tabTo(1)">政务服务研究报告</span>
+	        </section>
+            <div class="journal_list">
+                <section class="journal" v-for="(mon,index) in result">
+                    <div class="year-title">
+                        <span>{{mon.date}}</span>
+                        <a v-if="mon.list.length>3">
+                            <p class="more active" @click="change($event,index)" >更多</p>
+                        </a>
+                         
+                    </div>
+
+                    <div class="pics">
+
+                        <div v-for="(vo,indexc) in mon.list" v-bind:class="[cover,isExpandedArr[index]==0&&indexc>2?covernoneClass:'']" @click="openMagzine(vo)">
+                            <img :src="vo.subThumb" alt="">
+                            <div class="journalFlag">
+                                <span class="font11">第{{vo.no}}期 </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+
+
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js " type="text/javascript " charset="utf-8 "></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/magCommon.js" type="text/javascript" charset="utf-8"></script>
+
+
+</body>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+        	cou_index:0,
+            cover: 'cover',
+            covernoneClass: 'covernone',
+            isExpandedArr: [],
+            result: [],
+            imgUrl: 'style/images/banner_03.png',
+        },
+        methods: {
+            init: function(index) {
+                var url = ajaxAgent.serverAction + '/app/mag/getCatMagList';
+
+                console.log("index--- " + index);
+                api.showProgress();
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 10,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+							type:index
+                        }
+                    }
+                }, function(ret, err) {
+                api.hideProgress();
+                      console.log("**** dir  " + JSON.stringify(ret));
+                    if (ret.resultCode != 10000) {
+                        api.toast({
+                            msg: '网络错误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return ;
+                    }
+                    vm.result = ret.resultData;
+                    vm.isExpandedArr = Array(vm.result.length).fill(0);
+
+                });
+            },
+            tabTo:function(index){
+            	if(vm.cou_index == index){
+            		return;
+            	}
+            	vm.cou_index = index;
+            	vm.init(index);
+            
+            },
+            change: function(e, index) {
+                //首先清空所有的状态
+                if (vm.isExpandedArr[index] == 0) {
+                    vm.isExpandedArr = Array(vm.result.length).fill(0)
+                    Vue.set(vm.isExpandedArr, index, 1)
+
+                } else {
+                    vm.isExpandedArr = Array(vm.result.length).fill(0)
+                    Vue.set(vm.isExpandedArr, index, 0)
+                }
+            },
+             openMagzine: function(vo) {
+                openMag(vo.id,vo.name, vo.contentIdList,vo.thumb, vo.remarks);
+
+            }
+        }
+
+    });
+
+    apiready = function() {
+        FastClick.attach(document.body);
+        vm.init(0);
+        var adImgulArr = sessionAgent.getStorage(sessionAgent.keyMap.adImgulArr);
+        if (adImgulArr != null && adImgulArr != '') {
+            vm.imgUrl = adImgulArr[1];
+        }
+    }
+</script>
+
+
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="dir">
+    <div id="app" v-cloak>
+        <div class="top-bg"></div>
+        <!-- 头部 -->
+        <div class="d-top" style="background-color: #FFFFFF;">
+            <div class="d-header">
+               
+                <div class="title">
+                    <h2>目录</h2>
+                </div>
+            </div>
+           
+        </div>
+        <div class="main">
+            <div class="wrap">
+                <ul class="box">
+                    <li v-for="(content,index) in magCatList" tapmode>
+                        <a href="" v-for="(voc,index1) in content.contents">
+                            <h2 class="title" @click="toContent(index,index1)">{{content.name}}</h2>
+                            <div class="title-d" @click="toContent(index,index1)">
+                                <span>{{voc.title}} </span>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="bottom-bg"></div>
+    </div>
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            title: "",
+            magCatList: [],
+            magazineId: 0,
+            globalIndex: 0,
+            indexs: []
+        },
+        methods: {
+            init: function() {
+                var url = ajaxAgent.serverAction + '/app/mag/catDetail';
+                vm.magazineId = api.pageParam.id;
+                vm.title = api.pageParam.name;
+//              console.log("magid " + api.pageParam.id);
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 10,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+                            magazineId: vm.magazineId
+                        }
+                    }
+                }, function(ret, err) {
+                    //console.log("**** dir  " + JSON.stringify(ret));
+                    if (ret.resultCode != 10000) {
+                        api.toast({
+                            msg: '网络错误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                    }
+
+                    var data = ret.resultData;
+                    vm.magCatList = data.magCatList;
+
+                    var magCatListLen = vm.magCatList.length;
+                    for (var i = 0; i < magCatListLen; i++) {
+                        var contentsLen = vm.magCatList[i].contents.length;
+                        for (var j = 0; j < contentsLen; j++) {
+                            vm.indexs.push(i + "," + j);
+                        }
+                    }
+                });
+            },
+            toContent: function(index, index1) {
+                api.execScript({
+                    name: 'win_magHeader',
+                    script: 'vm.toContent(' + vm.indexs.indexOf(index + "," + index1) + ');'
+                });
+                api.closeSlidPane();
+            }
+        }
+
+
+    });
+    apiready = function() {
+        FastClick.attach(document.body);
+        utilsFuncs.getFixedStateBarHeigth($api.dom('.d-top'));
+        utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+        vm.init();
+
+    }
+</script>
+
+</html>

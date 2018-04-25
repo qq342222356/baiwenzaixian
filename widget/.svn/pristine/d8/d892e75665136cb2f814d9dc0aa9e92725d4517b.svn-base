@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="per-mes">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="ico-wrap" onclick="api.closeWin();">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>个人资料</h2>
+            </div>
+            <div class="right-btn" onclick="save();" v-if="showSave">
+                <h2>保存</h2>
+            </div>
+        </div>
+    </div>
+    <div class="form-wrap">
+        <form onsubmit="return false;">
+            <div class="item">
+                <a class="list"  @click="toSetHeadimg()">
+                    <div class="show-input">
+                        <span class="left-mes">头像</span>
+                        <p class="right-mes"><span class="arr-before"><img :src="headImgPath" alt=""></span><i class="right-arr"></i></p>
+                    </div>
+                </a>
+                <a class="list" @click="toSet(0)">
+                    <div class="show-input">
+                        <span class="left-mes">昵称</span>
+                        <p class="right-mes"><span class="arr-before">{{nickName}}</span><i class="right-arr"></i></p>
+                    </div>
+                </a>
+            </div>
+            <div class="item">
+                <a class="list">
+                    <div class="show-input">
+                        <span class="left-mes">手机号</span>
+                        <p class="right-mes"><span class="arr-before">{{cellPhone}}</span></p>
+                    </div>
+                </a>
+                <a class="list">
+                    <div class="show-input" @click="toSet(1)">
+                        <span class="left-mes">密码</span>
+                        <p class="right-mes"><span class="arr-before red">修改密码</span><i class="right-arr"></i></p>
+                    </div>
+                </a>
+            </div>
+        </form>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>    
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+var headerH,userId;
+var FNImageClip;
+apiready = function(){
+	FastClick.attach(document.body);
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+	headerH = utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	FNImageClip = api.require('FNImageClip');
+	
+	setUserinfo();
+
+}
+
+function setUserinfo(){
+	var userEntity = sessionAgent.getLoginInfo();
+	userId = userEntity.userId;
+	vm.headImgPath = userEntity.headImgPath;
+	vm.nickName = userEntity.nickName;
+	vm.cellPhone = userEntity.cellPhone;
+}
+
+var vm = new Vue({
+	el:"#app",
+	data:{
+		showSave:false,
+		headImgPath:'style/images/person-normal.png',
+		nickName:'ncabb7b小妍妍',
+		cellPhone:'18000001234',
+		list:[{'name':'win_user_setNickname','url':'win_user_setNickname.html'},{'name':'win_user_setPassword','url':'win_user_setPassword.html'}]
+	},
+	methods:{
+		toSetHeadimg:function(){
+			api.actionSheet({
+			    title: '设置头像',
+			    cancelTitle: '取消',
+			    buttons: ['拍照','相册']
+			},function(ret,err){
+				var clkChoose = ret.buttonIndex;	
+				if('1'==clkChoose){//拍照
+					loadCellImg('camera');
+				}else if('2'==clkChoose){//相册
+					loadCellImg('album');
+				}
+			});
+		},
+		toSet:function(index){		//index:0代表修改昵称,1代表修改密码
+			api.openWin({
+	            name: vm.list[index].name,
+	            url: vm.list[index].url
+            });
+		}
+	}
+});
+
+function loadCellImg(sourceType ){
+		api.getPicture({
+		    sourceType: sourceType,
+		    encodingType: 'jpg',
+		    mediaValue: 'pic',
+		    destinationType: 'url',
+		    allowEdit: true,
+		    quality: 50,
+		    targetWidth:300,
+		    targetHeight:300,
+		    saveToPhotoAlbum: false
+		}, function(ret, err){ 
+		    if (ret) {
+		    	var imgUrl = ret.data;
+		    	if(null!= imgUrl && ""!=imgUrl){
+//		    		adrCropImg(ret.data);
+					getComitRs(ret.data);
+		    	}
+		    } else{
+//		        api.alert({msg:err.msg});
+		    }
+		});
+		
+	}
+	
+function getComitRs(selImgLocation){
+		if(null==selImgLocation || ""==selImgLocation){
+			return;
+		}
+		vm.showSave = true;
+		
+		FNImageClip.open({
+            rect: {
+                x: 0,
+                y: headerH,
+                w: api.winWidth,
+                h: api.winHeight - headerH - 60
+            },
+            srcPath: selImgLocation,
+            mode:'image',
+            style: {
+                mask: 'red',
+                clip: {
+                    w: 200,
+                    h: 200,
+                    x: api.winWidth/2-100,
+                    y: 200,
+                    borderColor: '#d33d3e',
+                    borderWidth: 2,
+                    appearance: 'circular'
+                }
+            }
+        }, function(ret, err){
+//      console.log(JSON.stringify(ret)+""+JSON.stringify(err));
+//          if( ret ){
+//              alert( JSON.stringify( ret ) );
+//          }else{
+//              alert( JSON.stringify( err ) );
+//          }
+        });
+    }
+		
+		
+
+function save(){
+	var destPath='fs://imageClip/result'+new Date().getTime()+'.png';
+//	console.log(destPath);
+	FNImageClip.save({
+        destPath: destPath,
+        copyToAlbum: false,
+        quality: 1
+    },function(ret, err){        
+//  console.log(JSON.stringify(ret)+"---"+JSON.stringify(err));
+        if(ret) {
+            var imgUrl = ret.destPath;
+            uploadHeadimg(destPath);
+            
+            var userEntity = sessionAgent.getLoginInfo();
+            userEntity.headImgPath = imgUrl;
+            sessionAgent.setLoginInfo(userEntity);   
+            vm.headImgPath = imgUrl;
+           
+            api.execScript({
+				name:'win_main',
+				frameName:'frm_userCenter',
+                script: 'setUserinfo();'
+            });
+            FNImageClip.close(); 
+            vm.showSave = false;   
+        }
+    });
+
+
+}
+
+function uploadHeadimg(imgUrl){
+	
+//	console.log(imgUrl);
+	var url = ajaxAgent.serverAction + '/upload/headimg';
+	api.ajax({
+	    url: url,
+	    method: 'post',
+//	    headers:{"Content-type": "multipart/mixed"},
+		dataType:'json',
+	    data: {
+	        values: {
+	            userId:userId
+	        },
+	        files: {
+	        	file: imgUrl
+//	            file: 'fs://a.gif'
+	        }
+	    }
+	}, function(ret, err) {
+	    if (ret) {
+//	        console.log(JSON.stringify(ret));
+	    } else {
+//	        console.log(JSON.stringify(err));
+	    }
+	});
+
+}
+
+</script>
+
+</html>

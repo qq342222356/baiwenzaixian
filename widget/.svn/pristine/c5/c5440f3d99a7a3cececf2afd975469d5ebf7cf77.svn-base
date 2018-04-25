@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget id="A6057820894373" version="0.0.1"> 
+  <name>baiwen</name>  
+  <description>百问在线 语言版</description>  
+  <author email="504009071@qq.com" href="http://www.apicloud.com">arick7</author>  
+  <content src="index.html"/>  
+  <preference name="appBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="windowBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="frameBackgroundColor" value="rgba(0,0,0,0)"/>  
+  <preference name="autoLaunch" value="true"/>  
+  <preference name="autoUpdate" value="true"/>  
+  <preference name="smartUpdate" value="false"/>  
+  <preference name="debug" value="false"/>  
+  <preference name="statusBarAppearance" value="true"/>  
+  <preference name="urlScheme" value="baiwenzaixian"/>  
+  <preference name="querySchemes" value="bwnews"/>  
+  <preference name="pageBounce" value="false"/>  
+  <preference name="iOS7StatusBarAppearance" value="true"/>  
+  <preference name="softInputMode" value="pan"/>  
+  <permission name="location"/>  
+  <permission name="internet"/>  
+  <permission name="fileSystem"/>  
+  <permission name="internet"/>  
+  <permission name="bootCompleted"/>  
+  <access origin="*"/>  
+  <feature name="FNImageClip"/>  
+  <feature name="aliPayPlus"> 
+    <param name="urlScheme" value="aliPayPlusA6939160569323"/> 
+  </feature>  
+  <feature name="imageBrowser"/>  
+  <feature name="wx"> 
+    <param name="urlScheme" value="wxcd8076e352e59cd4"/>  
+    <param name="apiKey" value="wxcd8076e352e59cd4"/>  
+    <param name="apiSecret" value="2f9ee4027c90dedc9b7aabe4e9e1abf2"/> 
+  </feature>  
+  <feature name="wxPay"> 
+    <param name="urlScheme" value="wxcd8076e352e59cd4"/>  
+    <param name="apiKey" value="wxcd8076e352e59cd4"/>  
+    <param name="apiSecret" value="2f9ee4027c90dedc9b7aabe4e9e1abf2"/> 
+  </feature>  
+  <feature name="weibo"> 
+    <param name="urlScheme" value="wb2787552522"/>  
+    <param name="apiKey" value="2787552522"/>  
+    <param name="registUrl" value="http://www.bwnews.org/"/> 
+  </feature>  
+  <feature name="qq"> 
+    <param name="urlScheme" value="tencent1105997020"/>  
+    <param name="apiKey" value="1105997020"/> 
+  </feature>  
+  <feature name="ajpush"> 
+    <param name="app_key" value="dad1662c5941cea4a69268f7"/>  
+    <param name="channel" value="bwnewsChannel"/> 
+  </feature> 
+</widget>

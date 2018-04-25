@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    
+  
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="index"><div id="app" v-cloak>
+
+    <!--<div class="top-bg"></div>-->
+    <!--<div class="border-box"> </div>-->
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="logo ico-wrap">
+                <i class="ico"></i>
+            </div>
+            <div class="title">
+                <span :class="{active:cou_index == 0}" @click="open(0)">最新</span>
+                <i class="dot"></i>
+                <span :class="{active:cou_index == 1}" @click="open(1)">收藏</span>
+            </div>
+            <div class="search-ico ico-wrap">
+                <!--<i class="ico"></i>-->
+            </div>
+        </div>
+    </div>
+ 	<div class="bottom-bg"></div>
+</div></body>
+  <script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var page=1,pageSize=5,isRefresh=true;
+var headH,userId;
+apiready = function(){
+	headH = utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	FastClick.attach(document.body);
+	
+	vm.open(0);
+}
+
+function reFresh(){
+	vm.cou_index=-1;
+	vm.open(0);
+}
+
+var vm = new Vue({
+	el:'#app',
+	data:{
+		cou_index:-1,
+		list:[{'name':'frm_main_body0','url':'frm_main_body0.html'},
+			  {'name':'frm_main_body1','url':'frm_main_body1.html'}]
+	},
+	methods:{
+		open:function(index){
+			if(vm.cou_index == index){
+				return ;
+			}
+			if(index==1){
+				var userEntity = sessionAgent.getLoginInfo();
+				var userId = userEntity.userId;
+				if(userId==null || userId==""){
+					api.openWin({
+		                name: 'win_login',
+		                url: 'win_login.html'
+	                });
+	                return ;
+                }
+			}
+			vm.cou_index = index;
+			api.openFrame({
+	            name: vm.list[index].name,
+	            url: vm.list[index].url,
+	            bgColor:'#ccc',
+//	            animation:{
+//	            	type:"fade",                //动画类型（详见动画类型常量）
+//				    subType:"from_right",       //动画子类型（详见动画子类型常量）
+//				    duration:500 
+//	            },
+	            rect: {
+		            x:0,
+		            y:headH,
+		            w:'auto',
+		            h:api.frameHeight-headH
+	            }
+            });
+		
+		
+		}
+	}
+
+});
+
+
+
+
+
+
+</script>
+
+</html>

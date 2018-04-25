@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+<link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<title>个人中心</title>
+<style type="text/css" media="screen">
+html {
+    height: 100%;
+}
+.header {
+	background: none;
+}
+.header .head-box {
+    background: none;
+}
+a.btn_edit {
+    display: inline-block;
+    width: 2.506667rem;
+    height: 0.72rem;
+    line-height: 0.72rem;
+    border-radius: 0.133333rem;
+    color: #1a1a1a;
+    border: 1px solid #1a1a1a;
+    background: url(style/images/editIcn_03.png) no-repeat;
+    background-size: 0.333333rem 0.36rem;
+    background-position: 0.36rem 0.16rem;
+    padding-left: 0.853333rem;
+    position: absolute;
+    right: 0.266667rem;
+    top: 0.266667rem;
+    box-sizing: border-box;
+}
+.font12 {
+    font-size: 12px;
+}
+.font14 {
+    font-size: 14px;
+}
+[data-dpr="2"] .font14 {
+    font-size: 28px;
+}
+[data-dpr="3"] .font14 {
+    font-size: 42px;
+}
+
+
+[data-dpr="2"] .font12 {
+    font-size: 24px;
+}
+
+[data-dpr="3"] .font12 {
+    font-size: 36px;
+}
+.font18 {
+    font-size: 18px;
+}
+
+[data-dpr="2"] .font18 {
+    font-size: 36px;
+}
+
+[data-dpr="3"] .font18 {
+    font-size: 54px;
+}
+@font-face {
+  font-family: 'iconfont';
+  src: url('fonts/usercenter/iconfont.eot');
+  src: url('fonts/usercenter/iconfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/usercenter/iconfont.woff') format('woff'),
+  url('fonts/usercenter/iconfont.ttf') format('truetype'),
+  url('fonts/usercenter/iconfont.svg#iconfont') format('svg');
+}
+.iconfont{
+  font-family:"iconfont" !important;
+  font-size:16px;font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+div.basic {
+    padding-top: 1.12rem;
+}
+.avaster {
+    margin: 0 auto;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 0.133333rem solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    line-height: 1.6rem;
+    text-align: center;
+    padding: 0;
+}
+.avaster img {
+    width: 1.6rem;
+    height: 1.6rem;
+}
+div.basicInfo {
+    text-align: center;
+    color: #1a1a1a;
+    margin-top: 0.4rem;
+}
+span.nick {
+    margin-right: 0.533333rem;
+}
+div.bgPic {
+    height: 1.813333rem;
+    background: url(style/images/usercenter_bg_11.png) no-repeat;
+    background-size: cover;
+}
+.form-wrap {
+    padding-top: 0;
+}
+.left-mes .iconfont {
+    margin-right: 0.333333rem;
+}
+</style>
+</head>
+
+<body class="set">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header">
+        <div class="head-box" @click="toSet(0)">
+            <a class="btn_edit font12">编辑资料</a>
+        </div>
+    </div>
+    <!-- 头像等基本信息 -->
+    <div class="basic">
+        <div class="avaster">
+            <img :src="headImgPath" alt="">
+        </div>
+        <div class="basicInfo font14">
+            <span class="nick">昵称：{{nickName}}</span>
+            <span class="mobile">手机号：{{cellPhone}}</span>
+        </div>
+        <div class="bgPic"></div>
+    </div>
+    <div class="form-wrap">
+        <form onsubmit="return false;">
+            <div class="item">
+                <a class="list" @click="toSet(1)">
+                    <div class="show-input">
+                        <span class="left-mes"><i class="iconfont font18">&#xe6ef;</i>会员信息</span>
+                        <p class="right-mes"><i class="right-arr"></i></p>
+                    </div>
+                </a>
+                <a class="list" @click="clearCache()">
+                    <div class="show-input">
+                        <span class="left-mes"><i class="iconfont font18">&#xe699;</i>清除缓存</span>
+                        <p><span style="color: #333">{{cacheSize}}M</span><i class="right-arr"></i></p>
+                    </div>
+                </a>
+                <a class="list" @click="toSet(2)">
+                    <div class="show-input">
+                        <span class="left-mes"><i class="iconfont font18">&#xe65e;</i>意见反馈</span>
+                        <p class="right-mes"><i class="right-arr"></i></p>
+                    </div>
+                </a>
+                <a class="list" @click="toSet(3)">
+                    <div class="show-input">
+                        <span class="left-mes"><i class="iconfont font18">&#xe651;</i>设置</span>
+                        <p class="right-mes"><i class="right-arr"></i></p>
+                    </div>
+                </a>
+            </div>
+        </form>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+apiready = function(){
+	FastClick.attach(document.body);
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+	utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	
+	api.getCacheSize(function(ret) {
+	    var size = (ret.size)/1024/1024;
+	    vm.cacheSize = (size+'').substring(0,5)+' ';
+	}); 
+
+	setUserinfo();
+//	sessionAgent.setLoginInfo(userEntity);
+
+}
+
+function setUserinfo(){
+	var userEntity = sessionAgent.getLoginInfo();
+	var headImgPath = userEntity.headImgPath;
+	var nickName = userEntity.nickName;
+	if(headImgPath==null || headImgPath==''){
+		headImgPath = 'style/images/avaster_07.png';
+		userEntity.headImgPath = headImgPath;
+		sessionAgent.setLoginInfo(userEntity);
+	}
+	if(nickName==null || nickName==''){
+		var deviceId = api.deviceId;
+		nickName = 'nc'+deviceId.substring(deviceId.length-5);
+		userEntity.nickName = nickName;
+		sessionAgent.setLoginInfo(userEntity);
+	}
+	vm.headImgPath = headImgPath;
+	vm.nickName=nickName;
+	vm.cellPhone=userEntity.cellPhone;
+}
+
+var vm = new Vue({
+	el:"#app",
+	data:{
+		headImgPath:'',
+		nickName:'',
+		cellPhone:'',
+		cacheSize:'',
+		list:[{'name':'win_userInfo','url':'win_userInfo.html'},{'name':'win_userVIP','url':'win_userVIP.html'},{'name':'win_feedback','url':'win_feedback.html'},{'name':'win_userSet','url':'win_userSet.html'}]
+	},
+	methods:{
+		toSet:function(index){		//index:0代表进入个人资料，1代表会员，2代表意见反馈，3代表设置
+			api.openWin({
+	            name: vm.list[index].name,
+	            url: vm.list[index].url
+            });
+		},
+		clearCache:function(){
+			api.clearCache({
+            },function(ret,err){
+            	api.toast({
+			        msg: '清除完成！',
+			        location:'middle'
+			    });
+			    vm.cacheSize = 0;
+            });
+		
+		}
+	}
+
+
+});
+</script>
+</html>

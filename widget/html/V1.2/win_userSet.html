@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="set">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="ico-wrap" @click="closeWin()">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>设置</h2>
+            </div>
+            <div class="right-btn">
+                <h2></h2>
+            </div>
+        </div>
+    </div>
+    <div class="form-wrap">
+        <form onsubmit="return false;">
+            <div class="item">
+               <!--  <a class="list">
+                    <div class="show-input" @click="setFontSize();">
+                        <span class="left-mes">字体大小</span>
+                        <p class="right-mes"><span class="round">{{list[index]}}</span><i class="right-arr"></i></p>
+                    </div>
+                </a> -->
+               <!-- <a class="list" href="">
+                    <div class="show-input">
+                        <span class="left-mes">检查更新</span>
+                        <p class="right-mes"><span class="new"><img src="style/images/NEW.png" alt=""></span><i class="right-arr"></i></p>
+                    </div>
+                </a>-->
+                <a class="list">
+                    <div class="show-input" @click="about()">
+                        <span class="left-mes">关于百问</span>
+                        <p class="right-mes"><span class="arr-before"></span><i class="right-arr"></i></p>
+                    </div>
+                </a>
+            </div>
+            <div class="formbtn exit" @click="loginout()">
+                <a>退出登录</a>
+            </div>
+        </form>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>    
+</body>
+    
+    
+    <script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+
+apiready = function(){
+	FastClick.attach(document.body);
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+	utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	
+	var userEntity = sessionAgent.getLoginInfo();
+	vm.userId = userEntity.userId;
+	
+	vm.getFontSize();
+}
+
+var vm = new Vue({
+	el:'#app',
+	data:{
+		userId:'',
+		index:2,
+		list:['','小号','中号','大号','超大']
+	},
+	methods:{
+		getFontSize:function(){
+			var fsize = sessionAgent.getStorage(sessionAgent.keyMap.fontSize);
+			if(fsize==null || fsize==''){
+				fsize = 2;
+				sessionAgent.setStorage(sessionAgent.keyMap.fontSize,fsize);
+			}
+			vm.index = fsize;
+		},
+		closeWin:function(){
+			api.closeWin();
+		},
+		setFontSize:function(){
+			api.actionSheet({
+			    title: '请选择字体大小',
+			    cancelTitle: '取消',
+			    buttons: ['小号','中号','大号','超大号']
+			},function(ret,err){
+				var clkChoose = ret.buttonIndex;		//分别为1,2,3,4
+				sessionAgent.setStorage(sessionAgent.keyMap.fontSize,clkChoose);
+				vm.index = clkChoose;
+			});
+		},
+		about:function(){
+			api.openWin({
+	            name: 'win_about',
+	            url: 'win_about.html'
+            });
+		},
+		loginout:function(){
+			var url = ajaxAgent.serverAction + '/app/loginOut';
+	    	api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data : {
+					values : { 
+						deviceId:api.deviceId,
+						userId : vm.userId
+					}
+				}
+			},function(ret,err){
+				api.closeToWin({
+				    name: 'win_main'
+				});
+			});
+			sessionAgent.clearLoginInfo();
+//			api.alert({
+//			    title: '提示',
+//			    msg: '退出登录，即将跳转到首页！',
+//			}, function(ret, err) {
+//				api.closeToWin({
+//				    name: 'win_main'
+//				});
+//			});
+			
+		}
+		
+	}
+	
+
+});
+
+    </script>
+
+
+</html>

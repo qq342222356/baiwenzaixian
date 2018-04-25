@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>开机导航</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/style.css"/>
+    <style>
+    </style>
+</head>
+<body>
+</body>
+</html>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/vue.js"></script>
+<!--<script type="text/javascript" src="script/jquery.min.js"></script>-->
+<script type="text/javascript" src="script/md5.js"></script>
+<script type="text/javascript" src="script/funcTools.js"></script>
+<script type="text/javascript" src="script/sessions.js"></script>
+<script type="text/javascript">
+
+apiready = function () {
+	$api.rmStorage(sessionAgent.keyMap.firstStart);
+    var firstStart = sessionAgent.getStorage(sessionAgent.keyMap.firstStart);
+    if(firstStart == 'no'){		//如果不是第一次启动则进入主页，否则进入导航页3图
+    	vm.openMain();
+    }else{
+    	vm.openGuide();
+		sessionAgent.setStorage(sessionAgent.keyMap.firstStart, 'no');
+    }
+    
+    api.setStatusBarStyle({
+	    style: 'dark'
+	});
+	
+	vm.initPush();
+	
+	vm.getAdImgurl();		//获取两张广告图，存在缓存adImgulArr
+	vm.getLastestMag();		//获取最新的几篇杂志存在缓存里。
+    
+}
+
+var vm = new Vue({
+	methods:{
+		openMain: function(){
+		    api.openWin({
+			    name: 'win_main',
+			    url: 'html/V1.2/win_main.html',
+			    slidBackEnabled:false,
+			    pageParam:{
+			    	index:2
+			    }
+		    });
+		},
+		openGuide: function(){
+			vm.setBegainImg();
+			
+			var thumbInfo = sessionAgent.getStorage(sessionAgent.keyMap.thumbInfo);		//从缓存中获取导航图的版本
+			var len = 4;
+			var picUrl = [];		//导航图数组
+			if(thumbInfo!=null && thumbInfo!=''){
+				len = thumbInfo.len;
+				var version = thumbInfo.version;
+				for(var l=0;l<len;l++){
+					picUrl.push(api.fsDir+'/thumb'+version+"-"+l+'.jpg');
+				}
+				console.log(JSON.stringify(picUrl));
+			}else{
+				for(var l=0;l<len;l++){
+					picUrl.push('../../image/'+l+'.jpg');
+				}
+			}
+			
+			var myFrames=[];
+			for(var i=0;i<len;i++){		//3张图
+				var frameObj = {
+					name: 'gro_index'+i, 
+					url: 'html/V1.2/gro_index.html', 
+					pageParam: {
+						picUrl: picUrl[i],
+						index:i,
+						len:len
+					}
+				};
+				myFrames.push(frameObj);
+			}
+		
+			api.openFrameGroup({
+			    name: 'group_index',
+		//	    scrollEnabled:false,
+			    rect:{
+			    	x:0,             //左上角x坐标
+				    y:0,             //左上角y坐标
+				    w:'auto',        //宽度，若传'auto'，页面从x位置开始自动充满父页面宽度
+				    h:'auto',         	 //高度，若传'auto'，页面从y位置开始自动充满父页面高度
+			    },
+			    frames:myFrames
+		    },function(ret,err){
+		    	var index = ret.index;
+				if(index == (len-1)){
+					api.setFrameGroupAttr({
+			            name: 'group_index',
+			            scrollEnabled:false
+		            });
+				}
+		    });
+		    
+		},
+		setBegainImg:function(){
+//		console.log(JSON.stringify(sessionAgent.getStorage(sessionAgent.keyMap.thumbInfo)));
+//		sessionAgent.rmStorage(sessionAgent.keyMap.thumbInfo);
+			var url = ajaxAgent.serverAction + '/app/guidePic/findHighVersionList ';
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    cache:true,
+			},function(ret,err){
+			
+				if(ret.resultCode == 10000){
+					var data = ret.resultData;
+					var versionFromAjax = data.version;
+					var thumbList = data.thumbList;
+					var len = thumbList.length;
+					
+					var thumbInfo = sessionAgent.getStorage(sessionAgent.keyMap.thumbInfo);		//从缓存中获取导航图的版本
+					if(thumbInfo!=null && thumbInfo!=''){				//缓存中有信息，就判断是否有新版本
+						var versionFromSession = thumbInfo.version;
+						var lenFromSession = thumbInfo.len;
+						if(versionFromSession == versionFromAjax && lenFromSession == len){		//导航图有新版本
+							return ;
+						}else{
+							thumbInfo.version = versionFromAjax;
+							thumbInfo.len = len;
+							sessionAgent.setStorage(sessionAgent.keyMap.thumbInfo,thumbInfo);	//先缓存版本号version
+							for(var i=0;i<len;i++){		//遍历缓存图片
+								vm.setImgtoCache(thumbList[i],i,versionFromAjax);
+							}
+						}
+					}else{							//缓存中无信息，初始化缓存
+						thumbInfo = {};
+						thumbInfo.version = versionFromAjax;
+						thumbInfo.len = len;
+						sessionAgent.setStorage(sessionAgent.keyMap.thumbInfo,thumbInfo);		//先存版本号version
+						for(var i=0;i<len;i++){			//遍历缓存图片
+							vm.setImgtoCache(thumbList[i],i,versionFromAjax);			//参数i,表示图片在缓存数组（thumbInfo.thumbList）中的位置
+						}
+					}
+					
+				}
+			});
+		},
+		setImgtoCache:function(thumb,i,version){
+			if(thumb==null || thumb==''){
+				return ;
+			}
+			api.download({
+			    url: thumb,
+			    savePath: 'fs://thumb'+version+'-'+i+'.jpg',
+			    report: true,
+			    cache: true,
+			    allowResume: true
+			}, function(ret, err) {
+			    if (ret.state == 1) {
+			        console.log("------"+ret.savePath);
+			    } 
+			});
+		},
+		getAdImgurl:function(){
+			var adImgulArr = sessionAgent.getStorage(sessionAgent.keyMap.adImgulArr);
+			if(adImgulArr==null || adImgulArr==''){
+				adImgulArr=[];
+			}
+			var url = ajaxAgent.serverAction + '/app/advert/pics';
+			var ts = new Date().getTime();
+			var token = hex_md5(""+ts);
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    cache:true,
+			    data : {
+					values : {
+//						ts:ts,
+						token:token
+					}
+				}
+			},function(ret,err){
+				if(ret.resultCode == 10000){
+					var data = ret.resultData;
+					for(var i=0;i<data.length;i++){
+						if(data[i].type == 0){
+							adImgulArr[0] = data[i].url; 
+						}else{
+							adImgulArr[1] = data[i].url;
+						}
+					}
+					sessionAgent.setStorage(sessionAgent.keyMap.adImgulArr,adImgulArr);
+				}
+			});
+		},
+		getLastestMag: function() {
+			var lastestMag = sessionAgent.getStorage(sessionAgent.keyMap.lastestMag);
+			if(lastestMag==null || lastestMag==''){
+				lastestMag={};
+			}
+		
+			var url = ajaxAgent.serverAction + '/app/mag/getLastestMag';
+			var ts = new Date().getTime();
+			var userEntity = sessionAgent.getLoginInfo();
+			var userId = userEntity.userId;
+			var token = hex_md5(userId+""+ts);
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    cache:true,
+			    data : {
+					values : {
+						userId:userId,
+//						ts:ts,
+						token:token
+					}
+				}
+			},function(ret,err){
+//				console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					sessionAgent.setStorage(sessionAgent.keyMap.lastestMag,ret.resultData);
+					
+				}
+			});
+        },
+        initPush:function(){
+        	var ajpush = api.require('ajpush');
+			ajpush.init(function(ret) {			//安卓初始化，ios默认已经初始化
+			    if (ret && ret.status){
+//			    alert(111);
+		    	console.log(JSON.stringify(ret));
+			   		  
+			    }
+			});
+			
+			//安卓设备 推送通知
+			api.addEventListener({
+			    name: 'appintent'
+			}, function(ret, err) {
+			    if (ret && ret.appParam.ajpush) {
+			        var ajpush = ret.appParam.ajpush;
+			        var id = ajpush.id;
+			        var title = ajpush.title;
+			        var content = ajpush.content;
+			        var extra = ajpush.extra;
+			        alert('appintent---'+JSON.stringify(ajpush));
+//			        vm.openMain();
+			    }
+			});
+			//ios设备 推送通知
+			api.addEventListener({
+			    name: 'noticeclicked'
+			}, function(ret, err) {
+			    if (ret && ret.value) {
+			        var ajpush = ret.value;
+			        var content = ajpush.content;
+			        var extra = ajpush.extra;
+			        alert('noticeclicked---'+JSON.stringify(ajpush));
+			        
+			    }
+			});   
+			//接收 推送消息，一般来说推送通知即可。
+//			ajpush.setListener(
+//			    function(ret) {
+//			         var id = ret.id;
+//			         var title = ret.title;
+//			         var content = ret.content;
+//			         var extra = ret.extra;
+//			         alert('setListener---'+JSON.stringify(ret));
+//			    }
+//			);
+        }
+	}
+	
+});
+
+</script>

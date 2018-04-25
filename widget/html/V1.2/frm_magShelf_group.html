@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <link rel="stylesheet" type="text/css" href="style/css/swiper.min.css">
+
+    <title>我的书架</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+        
+        .main {
+            padding-bottom: 1.44rem;
+            padding-top: 0!important;
+        }
+        
+        div.title {
+            margin: 0 auto;
+        }
+        
+        .font14 {
+            font-size: 14px;
+        }
+        
+        [data-dpr="2"] .font14 {
+            font-size: 28px;
+        }
+        
+        [data-dpr="3"] .font14 {
+            font-size: 42px;
+        }
+        
+        .font15 {
+            font-size: 15px;
+        }
+        
+        [data-dpr="2"] .font15 {
+            font-size: 30px;
+        }
+        
+        [data-dpr="3"] .font15 {
+            font-size: 45px;
+        }
+        
+        .book-frame {
+            background: none;
+        }
+        
+        .swiper-container {
+            height: 10.4rem;
+            width: 10rem;
+            padding: 0.586667rem 0;
+        }
+        
+        .swiper-button-prev,
+        .swiper-button-next,
+        .swiper-button-prev.swiper-button-disabled,
+        .swiper-button-next.swiper-button-disabled {
+            background-size: 0.333333rem 0.586667rem;
+        }
+        
+        .swiper-button-prev,
+        .swiper-button-next {
+            width: 0.786667rem;
+            height: 1.56rem;
+            border-radius: 0.133333rem;
+            background-color: #f8e2e2;
+        }
+        
+        .swiper-button-prev.swiper-button-disabled,
+        .swiper-button-next.swiper-button-disabled {
+            background-color: #efefef;
+        }
+        
+        .swiper-button-next.swiper-button-disabled {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23262523'%2F%3E%3C%2Fsvg%3E")
+        }
+        
+        .swiper-button-prev.swiper-button-disabled {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23262523'%2F%3E%3C%2Fsvg%3E")
+        }
+        
+        .swiper-button-next {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23bf5e58'%2F%3E%3C%2Fsvg%3E");
+            right: 0.4rem;
+        }
+        
+        .swiper-button-prev {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23bf5e58'%2F%3E%3C%2Fsvg%3E");
+            left: 0.4rem;
+        }
+        
+        .swiper-slide {
+            /*border: 1px solid;
+        box-sizing: border-box;*/
+            /*width: 8.24rem;*/
+        }
+        
+        .img-wrap {
+            width: 8.0rem;
+            height: 100%;
+            margin: 0 auto;
+            box-shadow: 0 0 0.3rem #d8d8d8;
+        -webkit-box-shadow: 0 0 0.3rem #d8d8d8;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            position: relative;
+        }
+        
+        .journal-wrap {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 2.466667rem;
+            height: 2.133333rem;
+            background-image: url(style/images/bookframe_flag_03.png);
+            background-repeat: no-repeat;
+            background-size: 2.466667rem 2.133333rem;
+        }
+        
+        .journal-wrap span {
+            color: #fff;
+            line-height: 0.96rem;
+            transform: rotate(40deg);
+            display: inline-block;
+            position: absolute;
+            right: -0.1rem;
+            top: 0.3rem;
+            width: 2.146667rem;
+            text-align: center;
+        }
+        
+        p.intro {
+            padding: 0 1.706667rem;
+            line-height: 0.64rem;
+            color: #333;
+            text-align: center;
+        }
+  .swiper-slide {
+  background: none!important;
+}
+    </style>
+</head>
+
+<body class="book-frame">
+    <div id="app" v-cloak>
+<!--        <div class="top-bg"></div>
+-->        <section class="main">
+
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="img-wrap" v-bind:style="backgroundDiv" @click="openMagzine()">
+                            <div class="journal-wrap font14">
+                                <span>{{mag.year}}第{{mag.no}}期</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 后翻按钮正常状态 -->
+                <div :class="[index<maxIndex ? '' : disabledClass, next] " @click="changePage(1)"> </div>
+                <!-- 后翻按钮最后一张 -->
+                <!--<div class="swiper-button-next swiper-button-disabled "></div>-->
+
+                <!-- 前翻按钮第一张 -->
+                <div :class="[index>0 ? '' : disabledClass, prev] " @click="changePage(-1)"></div>
+                <!-- 前翻按钮正常状态 -->
+                <!--<div class="swiper-button-prev"></div>-->
+            </div>
+            <p class="intro font15">{{mag.remarks}}</p>
+
+        </section>
+        <div class="bottom-bg"></div>
+    </div>
+
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/magCommon.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            mag: {},
+            index: 0,
+            maxIndex: 0,
+            backgroundDiv: {},
+            disabledClass: "swiper-button-disabled",
+            next: ' swiper-button-next',
+            prev: ' swiper-button-prev',
+         
+            
+        },
+        methods: {
+            init: function() {
+
+                vm.mag = api.pageParam.mag;
+                vm.index = api.pageParam.index;
+                vm.maxIndex = api.pageParam.maxIndex
+                vm.backgroundDiv = {
+                    backgroundImage: 'url(' + vm.mag.thumb + ')',
+                }
+            
+
+            },
+            changePage: function(op) {
+                var frameIndex = (op + vm.index);
+                if (frameIndex < 0 || frameIndex > vm.maxIndex) {
+                    return false;
+                }
+                api.execScript({
+                    frameName: 'frm_magShelf',
+                    script: 'vm.openFrameIndex(' + frameIndex + ');'
+                });
+            },
+            openMagzine: function() {
+                openMag(vm.mag.id, vm.mag.name, vm.mag.contentIdList, api.pageParam.thumb, api.pageParam.remarks);
+
+            }
+        }
+    })
+
+    apiready = function() {
+        FastClick.attach(document.body);
+        vm.init();
+    }
+</script>
+
+</html>

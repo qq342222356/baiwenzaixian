@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    
+
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    .isred {
+    	color:red !important;
+    }
+    </style>
+</head>
+
+<body class="index">
+   <!-- <div class="top-bg"></div>
+    <div class="border-box"> </div>-->
+    
+    <div class="footer" id="app" v-cloak>
+        <ul class="foot-box">
+            <li  v-for="(vo,index) in list"  @click="openWin(index)" :class="{active:index==cou_index}">
+                <i class="ico view-ico" v-if="index == 0"></i>
+                <i class="ico jianbao-ico" v-if="index == 1"></i>
+                <i class="ico bookstore-ico" v-if="index == 2"></i>
+                <i class="ico book-frame-ico" v-if="index == 3"></i>
+                <i class="ico person-ico" v-if="index == 4"></i>
+                <p :class="{isred: cou_index==index}">{{vo}}</p>
+            </li>
+        </ul>
+    </div>
+    <!--<div class="bottom-bg"></div>-->
+</body>
+    <script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var footH;
+apiready = function(){
+	rate = api.winHeight/$api.offset($api.dom('body')).h
+
+	footH=$api.offset($api.dom('.footer')).h*rate,
+    FastClick.attach(document.body);
+    
+    var index = api.pageParam.cou_index;
+    if(index==null || index==''){index=0;} 
+	vm.openFrm(index);
+	
+	utilsFuncs.closeAppMonitor();		//双击返回键退出app
+
+}
+
+var vm = new Vue({
+	el:"#app",
+	data: {
+        cou_index: 0,//显示当前索引
+        list:['时政','简报','书店','书架','我的'],
+        winNameList:['win_main','win_jianbao','win_magStore','win_magShelf','win_userCenter'],
+        frmNameList:['frm_main_head','frm_jianbao','frm_magStore_head','frm_magShelf','frm_userCenter'],
+        urlList:['frm_main_head.html','frm_jianbao.html','frm_magStore_head.html','frm_magShelf.html','frm_userCenter.html']
+    },
+    methods:{
+    	openWin:function(index){
+    		if(vm.cou_index==index){
+	    		return false;
+	    	}
+	    	if(index==2 || index==3){
+	    		var userEntity = sessionAgent.getLoginInfo();
+	    		var userId = userEntity.userId;
+	    		if(userId==null || userId==''){
+	    			api.openWin({
+	                    name: 'win_login',
+	                    url: 'win_login.html'
+                    });
+                    return ;
+	    		}
+	    	}
+	    	api.openWin({
+	            name: vm.winNameList[index],
+	            url: 'win_main.html',
+	            bgColor: '#fff',
+				slidBackEnabled : false,
+		    	bounces: false,
+	            animation: {
+		    		type: 'fade',
+		    		subType: 'from_right',
+		    		duration: 20
+		    	},
+	            pageParam:{
+	            	cou_index:index
+	            }
+            });
+    	},
+    	openFrm:function(index){
+    		vm.cou_index = index;
+			api.openFrame({
+                name: vm.frmNameList[index],
+                url: vm.urlList[index],
+                 rect: {
+	                x:0,
+	                y:0,
+	                w:'auto',
+	                h:'auto',
+	                marginBottom:footH
+                },
+               // reload:true,
+//              bounces:true,
+                pageParam:{
+                	footH:footH
+                }
+            });
+    	}
+    }
+
+
+});
+
+</script>
+</html>

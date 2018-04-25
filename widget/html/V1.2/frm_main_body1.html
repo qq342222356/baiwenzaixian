@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    
+    
+    <title>百问网</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+	#app{
+	    position:absolute;
+	    z-index: 2;
+	    left: auto;
+	    top: auto;
+    }
+    .top-bg {
+	    background: url(style/images/i-bg-top.png)no-repeat center top;
+	    width: 100%;
+	    height: 3.173333rem;
+	    position: fixed;
+	    top: -0.5rem;
+	    left: 0;
+	    background-size: cover;
+	    z-index: 1;
+	}
+
+	.bottom-bg {
+	    background: url(style/images/i-bg-bottom.png)no-repeat center top;
+	    width: 100%;
+	    height: 5.173333rem;
+	    bottom: 0;
+	    left: 0;
+	    position: fixed;
+	    background-size: cover;
+	    z-index: 1;
+	}
+	[v-cloak] {
+	  display: none;
+	}
+    </style>
+</head>
+
+<body class="index">
+
+    <div class="top-bg"></div>
+<div id="app" v-cloak>
+    <div class="main">
+        <div class="m-wrap">
+            <ul class="m-box">
+                <li class="n-list" v-for="(vo,index) in list" @click="todetail(vo.id)">
+                    <a>
+                        <div class="left-pic">
+                            <img :src="vo.cover">
+                        </div>
+                        <div class="right-text">
+                            <div class="top">
+                                <h2>{{vo.title}}</h2>
+                            </div>
+                            <div class="tags">
+                                <span>{{vo.updateDate}}</span>
+                                <span class="tag-class">{{vo.type}}</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                    
+            </ul>
+        </div>
+    </div>
+   </div>
+    <div class="bottom-bg"></div>
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var page=1,pageSize=20,isRefresh=true;
+var userId;
+apiready = function(){
+	FastClick.attach(document.body);
+	var userEntity = sessionAgent.getLoginInfo();
+	userId = userEntity.userId;
+	vm.getCollectPoliticsList();
+	
+	//底部下拉加载更多
+	api.addEventListener({
+		name : 'scrolltobottom',
+		extra:{
+	        threshold:0            //设置距离底部多少距离时触发，默认值为0，数字类型
+	    }
+	}, function(ret, err) {
+		if(isRefresh){
+			page++;
+			vm.getCollectPoliticsList();
+		}
+	});
+	
+	api.setRefreshHeaderInfo({
+	    visible: true,
+        bgColor: '#ccc',
+        textColor: '#fff',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...',
+	    showTime: true
+	}, function(ret, err) {
+	    //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+		reFresh();
+		api.refreshHeaderLoadDone();
+	});
+
+}
+
+function reFresh(){
+	page=1,pageSize=20,isRefresh=true,vm.list=[];
+	vm.getCollectPoliticsList();
+}
+
+var vm = new Vue({
+	el:'#app',
+	data:{
+		list:[]
+	},
+	methods:{
+		getCollectPoliticsList:function(){
+			var url = ajaxAgent.serverAction + '/app/politics/collectPoliticsList';
+			var ts = new Date().getTime();
+			var token = hex_md5(userId+""+page+""+pageSize+""+ts);
+			api.showProgress();
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 10,
+			    dataType: 'json',
+			    returnAll:false,
+			    cache:true,
+			    data : {
+					values : {
+						userId:userId,
+						page:page,
+						pageSize:pageSize,
+//						ts:ts,
+						token:token
+					}
+				}
+			},function(ret,err){
+			api.hideProgress();
+//				console.log(JSON.stringify(ret)+"===="+JSON.stringify(err));
+				if(ret.resultCode == 10000){
+					var data = ret.resultData;
+					if(data!=null && data!="" && data.length!=0){
+						for(var i=0;i<data.length;i++){
+							data[i].updateDate = utilsFuncs.dateDiff(data[i].createDate);
+							if(data[i].type == 0)data[i].type='简报';
+							if(data[i].type == 1)data[i].type='日报';
+							if(data[i].type == 2)data[i].type='新闻';
+							vm.list.push(data[i]);
+						}
+					}else{
+						isRefresh = false;
+						api.toast({
+			                msg:'数据加载完了',
+			                location:'middle'
+		                });
+		                
+					}
+				}else{	
+					api.toast({
+		                msg:'暂无数据',
+		                location:'middle'
+	                });
+				}
+			});
+		
+		},
+		todetail:function(id){
+			api.openWin({
+	            name: 'win_poliContent',
+	            url: 'win_poliContent.html',
+	            pageParam:{
+	            	id:id
+	            }
+            });
+		
+		}
+		
+		
+	
+	}
+
+});
+
+
+
+</script>
+
+</html>

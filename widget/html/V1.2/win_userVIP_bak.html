@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>会员信息</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="menber">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="ico-wrap" @click="closeWin();">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>会员信息</h2>
+            </div>
+        </div>
+    </div>
+    <div class="wrap">
+        <div class="banner">
+            <img src="style/images/banner-menber.png" alt="">
+            <div class="banner-foot">
+                <div class="b-box">
+                    <div class="per-img">
+                        <img :src="headImgPath" alt="">
+                    </div>
+                    <p class="user-name">{{nickName}}<span v-if="isVip">VIP</span><span v-else>无会员</span></p>
+                    <P class="peri-date" v-if="isVip">有效期
+                        <time>{{vipEndtime}}</time>
+                    </P>
+                </div>
+            </div>
+        </div>
+        <div class="part">
+            <div class="title">
+                <h2>开通会员</h2>
+            </div>
+            <p :class="{bg:true,active:index==cou_index}" v-for="(value,index) in dataList" @click="getBuyinfo(index)"><span>{{value.subject}}</span><span>￥{{value.price}}元</span></p>
+            <!--<p class="bg"><span>半年会员</span><span>￥{{}}1980元</span></p>
+            <p class="bg"><span>季度会员</span><span>￥{{}}1180元</span></p>
+            <p class="bg"><span>月度会员</span><span>￥{{}}398元</span></p>-->
+            
+        </div>
+        <div class="part">
+            <div class="title">
+                <h2>支付方式</h2>
+            </div>
+            <p class="bg"><span><i class="zhifubao"></i>支付宝</span><span><i class="select"></i></span></p>
+        </div>
+        <div class="part">
+            <div class="title">
+                <h2>会员特权</h2>
+            </div>
+            <p class="bg"><span class="text-bef">每周订阅最新更新的大数据杂志</span><span class="text">大数据报告更新实时短信推送</span></p>
+        </div>
+        <div class="buybtn" @click="toBuy();">
+           	 购买
+        </div>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>    
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var userId;
+apiready = function(){
+	FastClick.attach(document.body);
+	headerH = utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+
+	var userEntity = sessionAgent.getLoginInfo();
+	userId = userEntity.userId;
+	vm.headImgPath = userEntity.headImgPath;
+	vm.nickName = userEntity.nickName;
+	
+	vm.getVipInfo();
+	vm.getVipList();
+}
+
+var vm = new Vue({
+	el:"#app",
+	data:{
+		cou_index:0,
+		index:0,
+		headImgPath:'',
+		nickName:'',
+		isVip:false,
+		vipEndtime:'',
+		dataList:[]
+	},
+	methods:{
+		closeWin:function(){
+			api.closeWin();
+		},
+		getVipInfo:function(){
+			var url = ajaxAgent.serverAction + '/app/user/member/info';
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data : {
+					values : { 
+						userId : userId
+					}
+				}
+			},function(ret,err){
+		//		console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					vm.isVip = true;
+					vm.vipEndtime = new Date(ret.resultData).toLocaleString().replace(/:\d{1,2}$/,' ');
+
+				}
+			});
+			
+		},
+		getBuyinfo:function(index){
+			vm.index =index;
+			vm.cou_index = index;
+		},
+		getVipList:function(){
+			var url = ajaxAgent.serverAction + '/app/productList';
+			api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    cache:true,
+			},function(ret,err){
+		//		console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					var data = ret.resultData;
+					if(data!='' && data !=null && data.length!=0){
+						vm.dataList = data;
+						
+					}else{
+						alert('数据加载异常，退出当前页');
+						api.closeWin();
+					}
+			
+				}
+			});
+		
+		},
+		toBuy:function(){
+			var url = ajaxAgent.serverAction + '/app/order/create';
+	    	api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data : {
+					values : { 
+						userId : userId,
+						productId : vm.dataList[vm.index].id,
+						payWay : 'alipay',
+	//					magazineId : ''
+					}
+				}
+			},function(ret,err){
+	//			console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					var data = ret.resultData;
+					orderNo = data.orderNo;
+//					if(payWay=='wechat'){
+//						payByWechat(data.orderInfo);
+//					}
+//					if(payWay=='alipay'){
+						payByAliPay(data.orderInfo);
+//					}
+				}
+			});
+	}
+	}
+});
+
+//支付宝支付
+function payByAliPay(orderInfo) {
+
+//	console.log(productId+'---'+price+'---'+payWay+'---'+orderInfo);	
+	var aliPayPlus = api.require('aliPayPlus');
+	aliPayPlus.payOrder({
+	    orderInfo: orderInfo
+	}, function(ret, err) {
+		var msg;
+		if(ret.code == 9000){
+			msg='支付成功';
+			orderFinish(orderNo);
+		}
+		if(ret.code == 8000){msg='正在处理中';}
+		if(ret.code == 4000){msg='订单支付失败';}
+		if(ret.code == 5000){msg='重复请求';}
+		if(ret.code == 6001){msg='中途取消支付操作';}
+		if(ret.code == 6002){msg='网络连接出错';}
+		if(ret.code == 6004){msg='支付结果未知';}
+				
+	    api.alert({
+	        title: '支付结果',
+	        msg: msg,
+	        buttons: ['确定']
+	    });
+	});
+
+}
+
+function orderFinish(orderNo){
+	var url = ajaxAgent.serverAction + '/app/order/finish';
+    	api.ajax({
+		    url: url,
+		    method: 'post',
+		    timeout: 30,
+		    dataType: 'json',
+		    returnAll:false,
+		    data : {
+				values : { 
+					userId : userId,
+					orderNo : orderNo
+				}
+			}
+		},function(ret,err){
+//			console.log(JSON.stringify(ret));
+		});
+}	
+
+</script>
+</html>

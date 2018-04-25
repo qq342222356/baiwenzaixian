@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>文章详情页</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+        
+        .d-header {
+            height: 1.146667rem;
+        }
+        
+        .font14 {
+            font-size: 14px;
+        }
+        
+        [data-dpr="2"] .font14 {
+            font-size: 28px;
+        }
+        
+        [data-dpr="3"] .font14 {
+            font-size: 42px;
+        }
+        
+        .font20 {
+            font-size: 20px;
+        }
+        
+        [data-dpr="2"] .font20 {
+            font-size: 40px;
+        }
+        
+        [data-dpr="3"] .font20 {
+            font-size: 60px;
+        }
+        
+        .font22 {
+            font-size: 22px;
+        }
+        
+        [data-dpr="2"] .font22 {
+            font-size: 44px;
+        }
+        
+        [data-dpr="3"] .font21 {
+            font-size: 66px;
+        }
+        
+        p.title {
+            line-height: 0.666667rem;
+            padding-top: 1.533333rem;
+            color: #1a1a1a;
+        }
+        
+        .time-author {
+            margin: 0.48rem 0;
+            line-height: 0.52rem;
+        }
+        
+        .time-author .time {
+            padding: 0 0.266667rem;
+            color: #999;
+            margin-right: 0.213333rem;
+            border: 1px solid #999;
+            border-radius: 0.26rem;
+            display: inline-block;
+        }
+        
+        .time-author .author {
+            padding: 0 0.4rem;
+            color: #d6383a;
+            border: 1px solid #d6383a;
+            border-radius: 0.26rem;
+            display: inline-block;
+        }
+        
+        .article p {
+            font-size: inherit !important;
+            line-height: 0.8rem !important;
+            color: #333 !important;
+            text-align: justify;
+            padding-top: 0.666667rem !important;
+        }
+        
+        .maga-content .main .share-to .share-add a i.sina {
+            background-size: 0.72rem 0.586667rem;
+        }
+        
+        .maga-content .main .share-to .share-add a i.weixin {
+            background-size: 0.746667rem 0.6rem;
+        }
+        
+        .maga-content .main .share-to .share-add a i.qq {
+            background-size: 0.56rem 0.56rem;
+        }
+        
+        .maga-content .main .recomm .right {
+            padding-top: 0.6rem;
+        }
+        /* 分享样式 */
+        
+        .shareDialog {
+            background-color: #fff;
+            width: 9.0625rem;
+        }
+        
+        .ShareContent {
+            padding-left: 0.4rem;
+            padding-top: 0.4rem;
+            padding-right: 0.4rem;
+        }
+        
+        .ShareContent h2 {
+            font-size: 0.5rem;
+            color: #b32023;
+            margin-bottom: 0.625rem;
+            text-align: left;
+        }
+        
+        .ShareContent ul {
+            margin-left: 0.279rem;
+            padding-left: 0.279rem;
+        }
+        
+        .ShareContent li {
+            float: left;
+            margin-right: 0.8rem;
+            margin-bottom: 0.46875rem;
+            text-align: center;
+        }
+        
+        .ShareContent li a {
+            width: 1.5625rem;
+            height: 1.5625rem;
+            display: block;
+            border-radius: 0.78125rem;
+            box-sizing: border-box;
+        }
+        
+        .shareDialog {
+            display: none;
+        }
+        
+        .ShareContent li p {
+            text-align: center;
+            margin-top: 0.21875rem;
+            color: #333;
+            font-size: 0.3125rem;
+            border: none;
+            padding: 0;
+        }
+        
+        .ShareContent li a img {
+            height: auto;
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<div class="shareDialog">
+    <div class="ShareContent nodatapl">
+        <h2>分享到</h2>
+        <ul>
+            <li onclick="shareNews('wechatHy');">
+                <a>
+                    <img src="style/images/weixin.png" alt="" class="share-icon-top">
+                </a>
+                <p>微信</p>
+            </li>
+            <li tapmode="" onclick="shareNews('wechatPyq');">
+                <a>
+                    <img src="style/images/pengyouquan.png" alt="">
+                </a>
+                <p>微信朋友圈</p>
+            </li>
+            <li tapmode="" onclick="shareNews('sinaWeibo');" style="margin-right:0">
+                <a>
+                    <img src="style/images/weibo.png" alt="" class="share-icon-top">
+                </a>
+                <p>新浪微博</p>
+            </li>
+            <li tapmode="" onclick="shareNews('qq');">
+                <a>
+                    <img src="style/images/qq.png" alt="">
+                </a>
+                <p>QQ</p>
+            </li>
+            <li tapmode="" onclick="shareNews('qzone');">
+                <a>
+                    <img src="style/images/qqarea.png" alt="" class="share-icon-top">
+                </a>
+                <p>QQ空间</p>
+            </li>
+            <div class="clearfix"></div>
+        </ul>
+    </div>
+</div>
+
+<body class="maga-content">
+    <div id="app" style="display: none;">
+        <div class="top-bg"></div>
+        <!-- 头部 -->
+        <div class="d-top" style="background-color: #FFFFFF;">
+            <div class="d-header">
+                <div class="ico-wrap" @click="closeWin()">
+                    <i class="back"></i>
+                </div>
+                <div class="ico-wrap" onclick="openShare()">
+                    <i class="share"></i>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div class="wrap">
+                <div class="titles">
+                    <p class="title font22">{{resultData.title}}</p>
+                    <p class="time-author font14">
+                        <span class="time">{{resultData.updateDate}}</span>
+                        <span class="author">{{resultData.type}}</span>
+                    </p>
+                    <hr size="1" width="100%" color="#e9e9e9" noshade>
+                </div>
+                <div class="article font20" v-html="resultData.content" id="content">
+
+                </div>
+                <div class="share-to">
+                    <div class="share-title">
+                        <p>推荐杂志</p>
+                    </div>
+                    <div class="share-add">
+                        <a onclick="shareNews('sinaWeibo');">
+                            <i class="sina"></i>
+                        </a>
+                        <a onclick="shareNews('wechatHy');">
+                            <i class="weixin"></i>
+                        </a>
+                        <a onclick="shareNews('qq');">
+                            <i class="qq"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="recomm">
+                    <div class="recomm-box" @click="openMag()">
+                        <div class="left-pic">
+                            <img :src="lastest[0].thumb" alt="">
+                        </div>
+                        <div class="right">
+                            <h2>{{lastest[0].name}}</h2>
+                            <p>{{lastest[0].remarks}}</p>
+                            <a>阅读杂志</a>
+                        </div>
+                    </div>
+                    <div :class="{'coll-box':true,active:resultData.isCollect}" @click="toCollect();">
+                        <i class="collec"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-bg"></div>
+    </div>
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/magCommon.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="script/layer.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+    var userId, politicsId;
+    apiready = function() {
+        FastClick.attach(document.body);
+        utilsFuncs.getFixedStateBarHeigth($api.dom('.d-top'));
+        utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+
+        politicsId = api.pageParam.id;
+        reFresh();
+
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            vm.closeWin();
+        });
+    }
+
+    function reFresh() {
+        var userEntity = sessionAgent.getLoginInfo();
+        userId = userEntity.userId;
+        vm.getPoliDetail(politicsId);
+
+        var lastestMag = sessionAgent.getStorage(sessionAgent.keyMap.lastestMag);
+        if (lastestMag != null && lastestMag != '') {
+            vm.lastest = lastestMag.lastest;
+        } else {
+            vm.getLastestMag();
+        }
+    }
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            toFresh: false,
+            resultData: {
+                "title": "",
+                "updateDate": "",
+                "type": "",
+                "content": "",
+                "isCollect": 0
+            },
+            lastest: [{
+                'name': '',
+                'no': '',
+                'thumb': '',
+                'remarks': ''
+            }]
+
+        },
+        methods: {
+            closeWin: function() {
+                if (vm.toFresh) {
+                    api.execScript({
+                        name: 'win_main',
+                        frameName: 'frm_main_body1',
+                        script: 'reFresh();'
+                    });
+                }
+                api.closeWin();
+            },
+            getPoliDetail: function(politicsId) {
+            	api.showProgress();
+                var url = ajaxAgent.serverAction + '/app/politics/detail';
+                var ts = new Date().getTime();
+                var token = hex_md5(politicsId + "" + ts);
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+                            userId: userId,
+                            politicsId: politicsId,
+                            //						ts:ts,
+                            token: token
+                        }
+                    }
+                }, function(ret, err) {
+                api.hideProgress();
+//                  console.log(JSON.stringify(ret));
+                    if (ret.resultCode == 10000) {
+               			$('#app').show();
+                        var data = ret.resultData;
+                        data.updateDate = utilsFuncs.dateDiff(data.updateDate);
+                        if(data.type == 0)data.type='简报';
+						if(data.type == 1)data.type='日报';
+						if(data.type == 2)data.type='新闻';
+                        vm.resultData = data;
+                        
+                        setTimeout(function(){
+                        	$("#content").find("img").attr('onclick', 'clickImg(this);');
+                        },1000);
+                    }
+                });
+            },
+            toCollect: function() {
+                if (userId == null || userId == "") {
+                    api.openWin({
+                        name: 'win_login',
+                        url: 'win_login.html'
+                    });
+                    return;
+                }
+
+                var url = ajaxAgent.serverAction + '/app/politics/uncollectPolitics'; //去取消收藏
+                if (vm.resultData.isCollect != 1) {
+                    url = ajaxAgent.serverAction + '/app/politics/collectPolitics'; //去收藏
+                }
+//              console.log(url);
+                var ts = new Date().getTime();
+                var token = hex_md5(userId + "" + politicsId + "" + ts);
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+                            userId: userId,
+                            politicsId: politicsId,
+                            //						ts:ts,
+                            token: token
+                        }
+                    }
+                }, function(ret, err) {
+//                  console.log(JSON.stringify(ret));
+                    if (ret.resultCode == 10000) {
+                        if (vm.resultData.isCollect != 1) {
+                            vm.resultData.isCollect = 1;
+                        } else {
+                            vm.resultData.isCollect = 0;
+                        }
+                        vm.toFresh = true;
+                    }
+                });
+            },
+            getLastestMag: function() {
+                var url = ajaxAgent.serverAction + '/app/mag/getLastestMag';
+                var ts = new Date().getTime();
+                //			userId = userEntity.userId;
+                var token = hex_md5(userId + "" + ts);
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+                            userId: userId,
+                            //						ts:ts,
+                            token: token
+                        }
+                    }
+                }, function(ret, err) {
+//                  console.log(JSON.stringify(ret));
+                    if (ret.resultCode == 10000) {
+                        var data = ret.resultData;
+                        vm.lastest = data.lastest;
+                    }
+                });
+            },
+            openMag: function() {
+                openMag(vm.lastest[0].id, vm.lastest[0].name, vm.lastest[0].contentIdList, vm.lastest[0].thumb, vm.lastest[0].remarks);
+            }
+        }
+    });
+    
+    function clickImg(obj) {
+        var curNum = 0,
+            imgSrcs = [];
+        var imgUrl = $(obj).attr('src');
+        $("#content").find("img").each(function(index) {
+            var imgSrc = $(this).attr('src');
+            imgSrcs.push(imgSrc);
+            if (imgSrc == imgUrl) {
+                curNum = index;
+            }
+        });
+
+        var imageBrowser = api.require('imageBrowser');
+        imageBrowser.openImages({
+            imageUrls: imgSrcs,
+            showList: false,
+            activeIndex: curNum
+        });
+    }
+
+    //-------------------分享相关代码----------------------------
+    function openShare() {
+        layer.open({
+            content: $(".shareDialog").html(),
+            style: "",
+            offset: "rt",
+            time: 15555
+        });
+        $(".shareBox").hide();
+        $(".black").hide();
+        $("html").css('overflow', 'auto');
+    }
+    
+
+    function shareNews(shareTarget) {
+        api.showProgress();
+        var shareTitle = vm.resultData.title;
+    	var shareDescription = vm.resultData.remarks;
+    	var shareImgUrlwb = 'widget://html/V1.2/style/images/logo3.png';
+
+        var shareFuncs = {
+            sinaWeibo: function(shareUrl) {
+                api.hideProgress();
+                var weibo = api.require('weibo');
+                weibo.shareWebPage({
+                    text: shareTitle,
+                    title: shareTitle,
+                    description: shareDescription,
+                    thumb: shareImgUrlwb,
+                    contentUrl: shareUrl
+                }, function(ret, err) {
+                    if (ret.status) {
+                        api.toast({
+                            msg: '分享成功',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                    } else {
+                        api.toast({
+                            msg: '分享失败',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                    }
+                });
+            },
+
+            qq: function(shareUrl) {
+                api.hideProgress();
+                var obj = api.require('qq');
+                obj.installed(function(ret, err) {
+                    if (ret.status) {
+                        obj.shareNews({
+                            url: shareUrl,
+                            title: shareTitle,
+                            description: shareDescription,
+                            imgUrl: shareImgUrlwb,
+                            type: 'QFriend'
+                        }, function(ret, err) {
+                            if (ret.status) {
+                                api.toast({
+                                    msg: '分享成功',
+                                    duration: 1000,
+                                    location: 'middle'
+                                });
+
+                            } else {
+                                api.toast({
+                                    msg: '分享失败',
+                                    duration: 1000,
+                                    location: 'middle'
+                                });
+                            }
+                        });
+                    } else {
+                        api.toast({
+                            msg: '您必须安装了QQ才可以分享内容到QQ。',
+                            duration: 2000,
+                            location: 'middle'
+                        });
+                    }
+                });
+            },
+
+            qzone: function(shareUrl) {
+                api.hideProgress();
+                var obj = api.require('qq');
+                obj.installed(function(ret, err) {
+                    if (ret.status) {
+                        obj.shareNews({
+                            url: shareUrl,
+                            title: shareTitle,
+                            description: shareDescription,
+                            imgUrl: vm.resultData.cover,
+                            type: 'QZone' //默认的是qq空间
+                        }, function(ret1, err1) {
+                            if (ret1.status) {
+                                api.toast({
+                                    msg: '分享成功',
+                                    duration: 1000,
+                                    location: 'middle'
+                                });
+                            } else {
+                                api.toast({
+                                    msg: '分享失败sdsd',
+                                    duration: 1000,
+                                    location: 'middle'
+                                });
+                            }
+                        });
+                    } else {
+                        api.toast({
+                            msg: '您必须安装了QQ才可以分享内容到QQ。',
+                            duration: 2000,
+                            location: 'middle'
+                        });
+                    }
+                });
+            },
+
+            wechatHy: function(shareUrl) {
+                api.hideProgress();
+                var wx = api.require('wx');
+                wx.shareWebpage({
+                    scene: 'session',
+                    title: shareTitle,
+                    description: shareDescription,
+                    thumb: shareImgUrlwb,
+                    contentUrl: shareUrl
+                }, function(ret, err) {
+                    if (ret.status) {
+                        api.toast({
+                            msg: '分享成功',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+
+                    } else {
+                        api.toast({
+                            msg: '分享失败',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                    }
+                });
+            },
+
+            wechatPyq: function(shareUrl) {
+                api.hideProgress();
+                var wx = api.require('wx');
+                wx.shareWebpage({
+                    scene: 'timeline',
+                    title: shareTitle,
+                    description: shareDescription,
+                    thumb: shareImgUrlwb, //api.pageParam.imgUrl,
+                    contentUrl: shareUrl
+                }, function(ret, err) {
+                    if (ret.status) {
+                        api.toast({
+                            msg: '分享成功',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                    } else {
+                        api.toast({
+                            msg: '分享失败',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                    }
+                });
+            }
+        };
+
+        var shareUrl = ajaxAgent.serverAction+'/app/politics/sharepage?from=singlemessage&isappinstalled=1&id='+politicsId;
+        shareFuncs[shareTarget](shareUrl);
+        layer.closeAll();
+    }
+    //-------------------分享相关代码-end--------------------------
+</script>
+
+</html>

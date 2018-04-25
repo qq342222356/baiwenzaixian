@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>开机导航</title>
+    <link rel="stylesheet" type="text/css" href="style/fonts/iconfont.css">
+    
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../script/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+    html {
+        height: 100%;
+    }
+    .start {
+	    width: 100%;
+	    height: 100%;
+	    overflow: hidden;
+	}
+	.start .item {
+	    position: relative;
+	    width: 100%;
+	    height: 100%;
+	}
+    .start .item .s-img {
+	    width: 100%;
+	    height: 100%;
+	}
+	.start .item .go-btn {
+	    display: block;
+	    width: 1.6rem;
+	    height: 0.666667rem;
+	    border-radius: 0.333333rem;
+	    background: rgba(0, 0, 0, 0.4);
+	    color: #fff;
+	    text-align: center;
+	    position: absolute;
+	    right: 0.666667rem;
+	    top: 0.666667rem;
+	    line-height: 0.666667rem;
+	    font-size: 0.4rem;
+	}
+    </style>
+</head>
+
+<body class="start">
+    <section class="one item">
+        <img class="s-img" src="../../image/1.jpg" alt="">
+        <span class="go-btn" id='goNext'>跳转</span>
+    </section>
+</body>
+
+<script>
+apiready = function(){
+	var index = api.pageParam.index;
+	var len = api.pageParam.len;
+	var picUrl = api.pageParam.picUrl;
+	if(index !=len-1){
+		index++;
+		$('#goNext').html(index+"/"+len+"图");
+	}else{
+		$('#goNext').attr('onclick','openMain()');
+		api.addEventListener({
+			name:'swipeleft'
+		}, function(ret, err){        
+		   openMain();
+		});
+	}
+	$('img').attr('src',picUrl);
+
+}
+
+function openMain(){
+    
+    api.openWin({
+	    name: 'win_main',
+	    url: 'win_main.html',
+	    slidBackEnabled:false,
+	    animation:{
+			type:"fade",                //动画类型（详见动画类型常量）
+		    subType:"from_right",       //动画子类型（详见动画子类型常量）
+		    duration:200                //动画过渡时间，默认300毫秒
+		}
+    });
+    
+}
+
+
+</script>
+</html>

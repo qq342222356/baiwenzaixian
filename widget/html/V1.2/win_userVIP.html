@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index.css">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <script src="script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <script src="script/zepto.min.js"></script>
+    <title>会员信息</title>
+    <style type="text/css" media="screen">
+        html {
+            height: 100%;
+        }
+        
+        .content {
+            /*padding-top: 1.12rem;*/
+            padding-bottom: 0.8rem;
+        }
+        
+        .banner_wrap {
+            height: 3.04rem;
+            background: url(style/images/banner_member.png) no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .base_info {
+            position: absolute;
+            bottom: 0;
+            height: 0.76rem;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 0.76rem;
+            background: rgba(173, 49, 51, 0.6);
+            font-size: 0.32rem;
+            color: #fff;
+            padding-left: 1.64rem;
+            padding-right: 0.293333rem;
+            display: -webkit-box;
+            -webkit-box-pack: justify;
+        }
+        
+        .account_name {
+            margin-right: 0.2rem;
+        }
+        
+        .avaster {
+            position: absolute;
+            width: 1.066667rem;
+            height: 1.066667rem;
+            border-radius: 50%;
+            left: 0.4rem;
+            bottom: 0.266667rem;
+            background-repeat: no-repeat;
+            background-size: contain;
+            border: 0.04rem solid #fff;
+            background-position:center center;
+            overflow:hidden;
+        }
+        
+        .prices {
+            padding: 0.32rem 0.4rem;
+            padding-bottom: 0;
+            padding-right: 0;
+        }
+        
+        .flexbox {
+            display: -webkit-box;
+            -webkit-box-pack: justify;
+            -webkit-box-align: center;
+        }
+        
+        .flexbox .left {
+            display: inline-block;
+        }
+        
+        .pricebox {
+            display: inline-block;
+            width: 4.44rem;
+            height: 1.586667rem;
+            border: 1px solid #ebebeb;
+            box-sizing: border-box;
+            margin-right: 0.2rem;
+            margin-bottom: 0.2rem;
+            text-align: center;
+            position: relative;
+            padding-top: 0.266667rem;
+            vertical-align: middle;
+            background-color: #fff;
+        }
+        
+        .pricebox .type {
+            font-size: 0.4rem;
+            line-height: 0.346667rem;
+            color: #1a1a1a;
+        }
+        
+        .pricebox .price {
+            font-size: 0.373333rem;
+            line-height: 1.066667rem;
+            color: #d33c3e;
+        }
+        
+        .pricebox .flag {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 0.533333rem;
+            width: 0.533333rem;
+            background-image: url(style/images/price_flag.png);
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 0.32rem 0.306667rem;
+            background-color: #ededed;
+        }
+        
+        .pricebox .flag.active {
+            background-color: #d33c3e;
+        }
+        
+        .mySection {
+            padding: 0 0.4rem;
+            padding-top: 0.266667rem;
+            background-color: #fff;
+            margin-bottom: 0.266667rem;
+        }
+        
+        .mySection .title {
+            font-size: 0.373333rem;
+            line-height: 0.493333rem;
+            color: #999;
+            padding-left: 0.666667rem;
+        }
+        
+        .mySection .title.paymethod {
+            background: url(style/images/icn_pay.png) no-repeat;
+            background-size: 0.506667rem 0.493333rem;
+            padding-bottom: 0.16rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .mySection .title.authority {
+            background: url(style/images/icn_vip.png) no-repeat;
+            background-size: 0.48rem 0.426667rem;
+            padding-bottom: 0.16rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .options .item {
+            height: 0.533333rem;
+            line-height: 0.533333rem;
+            padding: 0.266667rem 0 0.266667rem 1.013333rem;
+            font-size: 0.4rem;
+            color: #1a1a1a;
+        } 
+        
+        .item.alipay {
+            background: url(style/images/alipay.png) no-repeat 0.12rem center;
+            background-size:0.533333rem 0.533333rem;
+        }
+        
+        .item .is-chosen {
+            width: 0.533333rem;
+            height: 0.533333rem;
+            background-image: url(style/images/unchosen.png);
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+        
+        .item .is-chosen.chosen {
+            background-image: url(style/images/chosen.png);
+        }
+        
+        .list {
+            padding-top: 0.333333rem;
+            padding-bottom: 0.266667rem;
+        }
+        
+        .list p {
+            font-size: 0.4rem;
+            padding-left: 0.453333rem;
+            background: url(style/images/icn_dot.png) no-repeat 0.133333rem center;
+            background-size: 0.106667rem 0.106667rem;
+            margin-bottom: 0.293333rem;
+        }
+        
+        .btn_wrap {
+            padding: 0.4rem;
+        }
+        
+        .btn-buy {
+            line-height: 1.066667rem;
+            border-radius: 0.533333rem;
+            background-color: #d33c3e;
+            color: #fff;
+            font-size: 0.48rem;
+            text-align: center;
+        }
+        
+        .balance{margin: 0.32rem 0.4rem 0 0.4rem; padding: 0.32rem 0rem; background: white; box-shadow: 0 1px rgb(235,235,235),1px 0 rgb(235,235,235),0 -1px rgb(235,235,235),-1px 0 rgb(235,235,235);}
+	    .balance>p{font-size: 0.4rem; height: 0.30rem; line-height: 0.39rem; color: black; border-left: 0.08rem rgb(244,80,91) solid; padding-left: 0.3rem; font-weight: 500;}
+	    .balance>p>label{color:rgb(244,80,91);}
+	    .balance>p>label>span{font-size: 0.25rem;}
+	    .balance>div{box-shadow: 0 -1px rgb(235,235,235); margin: 0.32rem 0.4rem 0 0.4rem; padding-top: 0.3rem; font-size: 0.32rem;}
+    </style>
+</head>
+
+<body class="maga-content">
+    <div id="app" v-cloak>
+        <div class="top-bg"></div>
+        <!-- 头部 -->
+        <div class="header font15">
+            <div class="head-box">
+                <div class="ico-wrap" @click="closeWin()">
+                    <i class="back"></i>
+                </div>
+                <div class="title">
+                    <h2>会员信息</h2>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="banner_wrap">
+                <div class="base_info">
+                    <span class="account_name">{{nickName}}</span>
+                    <span class="level" v-if="isVip">VIP</span><span class="level" v-else>无会员</span>
+                    <P v-if="isVip">有效期 {{vipEndtime}} </P>
+
+                </div>
+                <div class="avaster" :style="'background-image: url('+headImgPath+');'"></div>
+            </div>
+            
+            <div class="balance">
+	            <p>
+	                <span>账户余额：</span>
+	                <label><span>￥</span>{{amount}}</label>
+	            </p>
+	            <div>
+	               	 账户余额仅限购买单本杂志，不支持购买会员不支持提现。最终解释权归北京百问网信息技术有限公司所有。
+	            </div>
+	        </div>
+            
+            <div class="prices">
+                <div class="pricebox" v-for="(value,index) in dataList" @click="getBuyinfo(index)">
+                    <p class="type ">{{value.subject}}</p>
+                    <p class="price ">￥{{value.price}}元</p>
+                    <div :class="{flag,active:index==cou_index} "></div>
+                </div>
+
+            <!--<div class="pricebox ">
+                    <p class="type ">年度会员</p>
+                    <p class="price ">￥3980元</p>
+                    <div class="flag active "></div>
+                </div>
+            </div>-->
+
+                <div class="mySection ">
+                    <div class="title paymethod ">支付方式</div>
+                    <div class="options ">
+                        <div class="item alipay flexbox " @click="chosePay(0)">
+                            <span>支付宝</span>
+                            <div :class="{'is-chosen':true,chosen:payIndex==0}">
+                            </div>
+                        </div>
+                        <!--<div class="item alipay flexbox " @click="chosePay(1)">
+                            <span>微信</span>
+                            <div :class="{'is-chosen':true,chosen:payIndex==1}">
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="mySection ">
+                    <div class="title authority ">会员特权</div>
+                    <div class="list ">
+                        <p>每周订阅最新更新的大数据杂志</p>
+                        <p>大数据报告更新实时短信推送</p>
+                    </div>
+                </div>
+
+                <div class="btn_wrap ">
+                    <div class="btn-buy " @click="toBuy();">购买</div>
+                </div>
+            </div>
+
+
+            <div class="bottom-bg "></div>
+        </div>
+</div>
+</body>
+<script src="../../script/api.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/vue.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/fastclick.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/flexible.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/md5.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/funcTools.js " type="text/javascript " charset="utf-8 "></script>
+<script src="../../script/sessions.js " type="text/javascript " charset="utf-8 "></script>
+<script>
+    var userId;
+    apiready = function() {
+        FastClick.attach(document.body);
+        headerH = utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+        utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+
+        var userEntity = sessionAgent.getLoginInfo();
+        userId = userEntity.userId;
+        vm.headImgPath = userEntity.headImgPath;
+        vm.nickName = userEntity.nickName;
+
+        vm.getVipInfo();
+        vm.getVipList();
+    }
+
+    var vm = new Vue({
+        el: "#app ",
+        data: {
+            cou_index: 0,
+            index: 0,
+            headImgPath: '',
+            nickName: '',
+            isVip: false,
+            vipEndtime: '',
+            dataList: [],
+            flag: 'flag',
+            amount:0,
+            payIndex:0
+        },
+        methods: {
+            closeWin: function() {
+                api.closeWin();
+            },
+            getVipInfo: function() {
+                var url = ajaxAgent.serverAction + '/app/user/member/info/v2';
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            userId: userId
+                        }
+                    }
+                }, function(ret, err) {
+                      		console.log(JSON.stringify(ret));
+                    if (ret.resultCode == 10000) {
+                    	vm.amount = ret.resultData.amount;
+                    	if(ret.resultData.isMember == 1){
+                    		vm.isVip = true;
+                    		vm.vipEndtime = new Date(ret.resultData.vipExpireDate).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    	}
+                    }
+                });
+
+            },
+            getBuyinfo: function(index) {
+                vm.index = index;
+                vm.cou_index = index;
+            },
+            chosePay: function(payIndex){
+            	vm.payIndex = payIndex;
+            },
+            getVipList: function() {
+                var url = ajaxAgent.serverAction + '/app/productList';
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                }, function(ret, err) {
+                    //		console.log(JSON.stringify(ret));
+                    if (ret.resultCode == 10000) {
+                        var data = ret.resultData;
+                        if (data != '' && data != null && data.length != 0) {
+                            vm.dataList = data;
+
+                        } else {
+                            alert('数据加载异常，退出当前页');
+                            api.closeWin();
+                        }
+
+                    }
+                });
+
+            },
+            toBuy: function() {
+                var url = ajaxAgent.serverAction + '/app/order/create';
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                        values: {
+                            userId: userId,
+                            productId: vm.dataList[vm.index].id,
+                            payWay: 'alipay'
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret.resultCode == 10000) {
+                        var data = ret.resultData;
+                        orderNo = data.orderNo;
+      					if(vm.payIndex==1){
+      						payByWechat(orderNo);
+      					}
+      					if(vm.payIndex==0){
+                        	payByAliPay(data.orderInfo);
+      					}
+                    }
+                });
+            }
+        }
+    });
+
+    //支付宝支付
+    function payByAliPay(orderInfo) {
+
+        //	console.log(productId+'---'+price+'---'+payWay+'---'+orderInfo);	
+        var aliPayPlus = api.require('aliPayPlus');
+        aliPayPlus.payOrder({
+            orderInfo: orderInfo
+        }, function(ret, err) {
+            var msg;
+            if (ret.code == 9000) {
+                msg = '支付成功';
+                orderFinish(orderNo);
+            }
+            if (ret.code == 8000) {
+                msg = '正在处理中';
+            }
+            if (ret.code == 4000) {
+                msg = '订单支付失败';
+            }
+            if (ret.code == 5000) {
+                msg = '重复请求';
+            }
+            if (ret.code == 6001) {
+                msg = '中途取消支付操作';
+            }
+            if (ret.code == 6002) {
+                msg = '网络连接出错';
+            }
+            if (ret.code == 6004) {
+                msg = '支付结果未知';
+            }
+
+            api.alert({
+                title: '支付结果',
+                msg: msg,
+                buttons: ['确定']
+            });
+        });
+
+    }
+    
+    //微信支付
+function payByWechat(orderNo) {
+	var wx = api.require('wx');
+	wx.isInstalled(function(ret, err) {
+	    if (!ret.installed) {
+	        api.alert({
+				msg : '当前设备未安装微信客户端,请选择其他支付方式！'
+			});
+	        return;
+	    }
+	});
+
+	var notifyURL = "http://api.bwnews.org/app/rewardOrder/toNotify_url";
+	var wxPay = api.require('wxPay');
+	//微信配置
+	wxPay.config({
+		apiKey : 'wxcd8076e352e59cd4',
+		mchId : '1444965602',
+		partnerKey : 'Beijin010bwnewsonline13520360422',
+		notifyUrl : notifyURL
+	}, function(ret, err) {
+		//商户配置正确
+		if (ret.status) {
+			//微信支付
+			wxPay.pay({
+				description : '购买杂志',
+				detail : "购买单本杂志永久查看，购买会员优惠多多",
+				totalFee : '1',		//单位：分
+				tradeNo : orderNo
+			}, function(ret2, err2) {
+				//支付成功
+				console.log(JSON.stringify(ret2)+"---"+JSON.stringify(err2)+"+++"+new Date().getTime());
+				if (ret2.status) {
+					api.alert({
+						msg : '支付成功'
+					});
+					api.closeWin();
+				}else{
+					 
+					 if ('-2' == err2.code) {
+						api.alert({
+							msg : '取消支付'
+						});
+					} else {
+						api.alert({
+							msg : '支付失败'
+						});
+					}
+				}
+			});
+			//商户配置错误
+		} else {
+			api.alert({
+				msg : '商户参数错误'
+			});
+		}
+	});
+}
+
+    function orderFinish(orderNo) {
+        var url = ajaxAgent.serverAction + '/app/order/finish';
+        api.ajax({
+            url: url,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    userId: userId,
+                    orderNo: orderNo
+                }
+            }
+        }, function(ret, err) {
+            //			console.log(JSON.stringify(ret));
+        });
+    }
+</script>
+
+</html>

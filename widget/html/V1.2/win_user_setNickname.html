@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/person-center.css">
+    <script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+    <title>修改昵称</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body class="password">
+<div id="app" v-cloak>
+    <!-- 上面背景 -->
+    <div class="top-bg"></div>
+    <!-- 头部 -->
+    <div class="header" style="background-color: #FFFFFF;">
+        <div class="head-box">
+            <div class="ico-wrap" @click="closeWin();">
+                <i class="back"></i>
+            </div>
+            <div class="title">
+                <h2>修改昵称</h2>
+            </div>
+            <div class="right-btn" @click="save();">
+                <h2>保存</h2>
+            </div>
+        </div>
+    </div>
+    <div class="form-wrap">
+        <form onsubmit="return false;">
+            <div class="item">
+                <a class="list">
+                    <div class="control-input">
+                        <input type="text" placeholder="" v-model.trim="nickName"/>
+                        <span class="close" @click="clear();"></span>
+                    </div>
+                </a>
+            </div>
+            <p class="tip-mes">2-10个字符，仅支持汉字、数字、英文、“-”和“_”</p>
+        </form>
+    </div>
+    <!-- 下面背景 -->
+    <div class="bottom-bg"></div>
+</div>    
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script>
+var userEntity;
+apiready = function(){
+	FastClick.attach(document.body);
+	utilsFuncs.getFixedStateBarHeigth($api.byId('app'));
+	utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+	
+	userEntity = sessionAgent.getLoginInfo();
+	vm.nickName = userEntity.nickName;
+	vm.userId = userEntity.userId;
+}
+var vm = new Vue({
+	el:"#app",
+	data:{
+		userId:'',
+		nickName:''
+	},
+	methods:{
+		closeWin:function(){
+			api.closeWin();
+		},
+		clear:function(){
+			vm.nickName = '';
+		},
+		save:function(){		//index:0代表修改昵称,1代表修改密码
+			var len = vm.nickName.length;
+			if(len<2 || len >10){
+				api.toast({
+	                msg:'请保证昵称长度为2-10！',
+	                location:'middle'
+                });
+				return ;
+			}
+//			if(vm.nickName == nickName){
+//				alert('请更改名字再保存或者退出');
+//			}
+			var url = ajaxAgent.serverAction + '/app/user/updateNickName';
+	    	api.ajax({
+			    url: url,
+			    method: 'post',
+			    timeout: 30,
+			    dataType: 'json',
+			    returnAll:false,
+			    data : {
+					values : { 
+						userId : vm.userId,
+						nickName : vm.nickName
+					}
+				}
+			},function(ret,err){
+//				console.log(JSON.stringify(ret));
+				if(ret.resultCode == 10000){
+					
+					userEntity.nickName = vm.nickName;
+					sessionAgent.setLoginInfo(userEntity);
+					alert('修改昵称成功');
+					
+					api.execScript({
+						name:'win_userInfo',
+		                script: 'setUserinfo();'
+	                });
+	                api.execScript({
+						name:'win_main',
+						frameName:'frm_userCenter',
+		                script: 'setUserinfo();'
+	                });
+					api.closeWin();
+				}
+			});
+		
+		}
+	
+	}
+
+
+});
+
+
+</script>
+
+
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style/css/index-v121.css">
+    <link rel="stylesheet" type="text/css" href="style/css/swiper.min.css">
+
+    <title>我的书架</title>
+    <style type="text/css" media="screen">
+    html {
+        height: 100%;
+    }
+    .main {
+        padding-bottom: 1.44rem;
+    }
+    div.title {
+        margin: 0 auto;
+    }
+
+    .font14 {
+        font-size: 14px;
+    }
+    [data-dpr="2"] .font14 {
+        font-size: 28px;
+    }
+    [data-dpr="3"] .font14 {
+        font-size: 42px;
+    }
+    .font15 {
+        font-size: 15px;
+    }
+    [data-dpr="2"] .font15 {
+        font-size: 30px;
+    }
+    [data-dpr="3"] .font15 {
+        font-size: 45px;
+    }
+
+    .book-frame {
+        background: none;
+    }
+    .swiper-container {
+        height: 10.4rem;
+        width: 10rem;
+        padding: 0.586667rem 0;
+    }
+    .swiper-button-prev, .swiper-button-next, .swiper-button-prev.swiper-button-disabled, .swiper-button-next.swiper-button-disabled {
+        background-size: 0.333333rem 0.586667rem;
+    }
+    .swiper-button-prev, .swiper-button-next {
+        width: 0.786667rem;
+        height: 1.56rem;
+        border-radius: 0.133333rem;
+        background-color: #f8e2e2;
+    }
+    .swiper-button-prev.swiper-button-disabled, .swiper-button-next.swiper-button-disabled {
+        background-color: #efefef;
+    }
+    .swiper-button-next.swiper-button-disabled {
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23262523'%2F%3E%3C%2Fsvg%3E")
+    }
+    .swiper-button-prev.swiper-button-disabled {
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23262523'%2F%3E%3C%2Fsvg%3E")
+    }
+    .swiper-button-next {
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23bf5e58'%2F%3E%3C%2Fsvg%3E");
+        right: 0.4rem;
+    }
+    .swiper-button-prev {
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M0%2C22L22%2C0l2.1%2C2.1L4.2%2C22l19.9%2C19.9L22%2C44L0%2C22L0%2C22L0%2C22z'%20fill%3D'%23bf5e58'%2F%3E%3C%2Fsvg%3E");
+        left: 0.4rem;
+    }
+    .swiper-slide {
+        /*border: 1px solid;
+        box-sizing: border-box;*/
+        /*width: 8.24rem;*/
+    }
+    .img-wrap {
+        width: 8.0rem;
+        height: 100%;
+        margin: 0 auto;
+        box-shadow: 0 0 0.3rem #d8d8d8;
+        -webkit-box-shadow: 0 0 0.3rem #d8d8d8;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        position: relative;
+    }
+    .journal-wrap {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 2.466667rem;
+        height: 2.133333rem;
+        background-image: url(style/images/bookframe_flag_03.png);
+        background-repeat: no-repeat;
+        background-size: 2.466667rem 2.133333rem;
+    }
+    .journal-wrap span {
+        color: #fff;
+        line-height: 0.96rem;
+        transform: rotate(40deg);
+        display: inline-block;
+        position: absolute;
+        right: -0.1rem;
+        top: 0.3rem;
+        width: 2.146667rem;
+        text-align: center;
+    }
+    p.intro {
+        padding: 0 1.706667rem;
+        line-height: 0.64rem;
+        color: #333;
+        text-align: center;
+    }
+    .header .ico-wrap {
+        position: absolute;
+        z-index: 10;
+    }
+    .book-frame .header .title span {
+        display: inline-block;
+        width: 4.0rem;
+        text-align: center;
+        position: relative;
+        font-weight: 500;
+        color: #1a1a1a;
+    }
+    .book-frame .header .title span.active {
+        color: #d33c3e;
+    }
+    .book-frame .header .title span.active:after {
+        content: '';
+        position: absolute;
+        width: 0.826667rem;
+        border-bottom: 0.04rem solid #d33c3e;
+        left: 50%;
+        bottom: -0.026667rem;
+        margin-left: -0.4133335rem;
+    }
+    
+    .content_wrap {
+        padding: 0 0.4rem;
+        text-align: center;
+    }
+    .icn_wrap {
+        padding-top: 4.146667rem;
+        padding-bottom: 2.346667rem;
+        background: url(style/images/emptyIcn_03.png) no-repeat center 2.36rem;
+        background-size: 0.906667rem 0.973333rem;
+        color: #333;
+    }
+    </style>
+</head>
+
+<body class="book-frame">
+    <div id="app" v-cloak>
+        <!-- <div class="top-bg"></div> -->
+        <!-- 头部 -->
+        <div class="header" style="background-color: #FFFFFF;">
+        	
+            <div class="head-box">
+	            <div class="logo ico-wrap">
+	                <i class="ico"></i>
+	            </div>
+	            <div class="title">
+	                <span :class="{active:tab_index==0}" @click="tabTo(0)">政务服务大数据报告</span>
+	                <span :class="{active:tab_index==1}" @click="tabTo(1)">政务服务研究报告</span>
+	            </div>
+                <!--<div class="title">
+                    <h2>我的书架</h2>
+                </div>-->
+            </div>
+        </div>
+        <section class="main" v-if="!hasData">
+            <div class="content_wrap font15">
+                <div class="icn_wrap">您还未订阅任何杂志！</div>
+                <!-- <div>
+                    <a href="#" class="subscribe" @click="goBuy()">立即前往订阅</a>
+                </div> -->
+            </div>
+        </section>
+        <div class="bottom-bg"></div>
+    </div>
+</body>
+<script src="../../script/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/fastclick.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/flexible.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/funcTools.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/sessions.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../script/swiper.jquery.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../../script/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+        	tab_index:0,
+        	magShelfGroup0Index:0,
+        	magShelfGroup1Index:0,
+            headH: 0,
+            hasData: true,
+
+        },
+        methods: {
+
+            tabTo: function(tab_index) {
+            	vm.tab_index = tab_index;
+            	api.showProgress();
+                var url = ajaxAgent.serverAction + '/app/mag/getShelfMags';
+                var userEntity = sessionAgent.getLoginInfo();
+                var userId = userEntity.userId;
+
+                api.ajax({
+                    url: url,
+                    method: 'post',
+                    timeout: 10,
+                    dataType: 'json',
+                    returnAll: false,
+                    cache: true,
+                    data: {
+                        values: {
+                            userId: userId,
+                            type:tab_index,
+                            page: 1,
+                            pageSize: 100
+                        }
+                    }
+                }, function(ret, err) {
+                console.log(JSON.stringify(ret));
+					api.hideProgress();
+                    if (ret.resultCode != 10000) {
+                        api.toast({
+                            msg: '网络错误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                    }else{
+                    	var mags = ret.resultData;
+	                    if (mags==null || mags=="" || mags.length==0) {
+	                    	if(tab_index==0){
+	                    		api.closeFrameGroup({
+	                                name: 'magShelfGroup1'
+                                });
+	                    	}else{
+	                    		api.closeFrameGroup({
+	                                name: 'magShelfGroup0'
+                                });
+	                    	}
+	                        vm.hasData = false;
+	                        return ;
+	                    }else{
+	                    	vm.hasData = true;
+	                    	var total = mags.length;
+	                    	var frames=[];
+	                    	for (var i = 0; i < total; i++) {
+	                            var baseFrameObj = {
+	                                name: 'frm_magShelf_group' + tab_index+''+i,
+	                                url: 'frm_magShelf_group.html',
+	                                pageParam: {
+	                                    mag: mags[i],
+	                                    index: i,
+	                                    maxIndex: total-1,
+	                                    thumb:mags[i].thumb,
+	                                    remarks:mags[i].remarks
+	                                }
+	                            };
+	                            frames.push(baseFrameObj);
+	                        }
+	                        var groIndex=0;
+	                        if(tab_index==0){
+		                        api.closeFrameGroup({
+		                            name: 'magShelfGroup1'
+	                            });
+	                            groIndex = vm.magShelfGroup0Index;
+                            }else{
+                            	api.closeFrameGroup({
+		                            name: 'magShelfGroup0'
+	                            });
+	                            groIndex = vm.magShelfGroup1Index;
+                            }
+	                        api.openFrameGroup({
+	                            name: 'magShelfGroup'+tab_index,
+	                            background: '#fff',
+	                            scrollEnabled: true,
+	                            rect: {
+	                                x: 0,
+	                                y: vm.headH,
+	                                w: 'auto',
+	                                h: api.frameHeight - vm.headH
+	                            },
+	                            index: groIndex,
+	                            frames: frames
+	                        }, function(ret, err) {
+	                        	if(tab_index==0){
+	                        		vm.magShelfGroup0Index = ret.index;
+	                        	}else{
+	                        		vm.magShelfGroup1Index = ret.index;
+	                        	}
+	                            
+	                        });
+	                    }
+                    }
+                    
+
+//                  if (vm.hasData) {
+//                      var total = vm.mags.length;
+//                      vm.maxIndex = total - 1;
+//                      //console.log("total " + total);
+//                      for (var i = 0; i < total; i++) {
+//                          var baseFrameObj = {
+//                              name: 'frm_magShelf_group' + i,
+//                              url: 'frm_magShelf_group.html',
+//                              pageParam: {
+//                                  mag: vm.mags[i],
+//                                  index: i,
+//                                  maxIndex: vm.maxIndex,
+//                                  thumb:vm.mags[i].thumb,
+//                                  remarks:vm.mags[i].remarks
+//                              }
+//                          };
+//                          vm.frames.push(baseFrameObj);
+//                      }
+
+
+//                      console.log("frameGroupName:"+tab_index);
+//                      api.openFrameGroup({
+//                          name: 'magShelfGroup'+tab_index,
+//                          background: '#fff',
+//                          scrollEnabled: true,
+//                          rect: {
+//                              x: 0,
+//                              y: vm.headH,
+//                              w: 'auto',
+//                              h: api.frameHeight - vm.headH
+//                          },
+//                          index: 0,
+//                          frames: vm.frames
+//                      }, function(ret, err) {
+//                          vm.index = ret.index;
+//                      });
+//                  }
+
+                });
+
+
+            },
+            openFrameIndex: function(index) {
+                api.setFrameGroupIndex({
+                    name: 'magShelfGroup'+vm.tab_index,
+                    index: index,
+                    scroll: true
+                });
+            }
+
+        }
+    })
+
+    function reFresh() {
+        vm.tabTo(0);
+    }
+    apiready = function() {
+        FastClick.attach(document.body);
+        vm.headH = utilsFuncs.getFixedStateBarHeigth($api.dom('.header'));
+        vm.tabTo(0);
+    }
+</script>
+
+</html>
